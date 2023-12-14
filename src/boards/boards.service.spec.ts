@@ -26,4 +26,19 @@ describe('BoardsService', () => {
     });
     expect(board).not.toBeNull();
   });
+
+  it('should update a board', async () => {
+    const newBoard = await service.create({
+      name: 'Test board',
+      description: 'Test description',
+      columns: 1,
+    });
+
+    const board = await service.update(newBoard.id, {
+      name: 'New Title',
+      description: 'New test description',
+    });
+    expect(board).not.toBeNull();
+    expect(board.name).toEqual('New Title');
+  });
 });
