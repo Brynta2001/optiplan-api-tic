@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BoardsModule } from './boards/boards.module';
 import { StagesModule } from './stages/stages.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { StagesModule } from './stages/stages.module';
     }),
     BoardsModule,
     StagesModule,
+    TasksModule,
   ],
   controllers: [],
   providers: [],
