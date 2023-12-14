@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -35,8 +35,18 @@ export class BoardsService {
     return `This action returns a #${id} board`;
   }
 
-  update(id: string, updateBoardDto: UpdateBoardDto) {
-    return null;
+  async update(id: string, updateBoardDto: UpdateBoardDto) {
+    const { columns, ...toUpdate } = updateBoardDto;
+    const board = await this.boardRepository.preload({id: id, ...toUpdate})
+    if (!board){
+      throw new NotFoundException(`Product with id ${id} not found`);
+    }
+    try {
+      await this.boardRepository.save(board);
+      return board;
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
   remove(id: number) {
