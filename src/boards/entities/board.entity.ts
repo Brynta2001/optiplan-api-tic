@@ -5,9 +5,11 @@ export class Board {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column('text')
     name: string;
 
-    @Column()
+    @Column('text', {
+        nullable: true,
+    })
     description: string;
 }

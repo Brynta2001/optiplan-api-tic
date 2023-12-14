@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BoardsService } from './boards.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { BoardsModule } from './boards.module';
 
 describe('BoardsService', () => {
   let service: BoardsService;
@@ -20,7 +22,8 @@ describe('BoardsService', () => {
     const board = await service.create({
       name: 'Test board',
       description: 'Test description',
+      columns: 1,
     });
-    expect(board).toBeDefined();
+    expect(board).not.toBeNull();
   });
 });

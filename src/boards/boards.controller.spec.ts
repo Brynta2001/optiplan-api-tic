@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BoardsController } from './boards.controller';
 import { BoardsService } from './boards.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 describe('BoardsController', () => {
   let controller: BoardsController;
