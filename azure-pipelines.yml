@@ -12,7 +12,7 @@ variables:
   azureSubscription: '4f4ecd5c-b8dc-45a7-84ad-f22b8e0677d8'
 
   # Web app name
-  webAppName: 'OptiPlanAPI'
+  webAppName: 'optiplanepn'
 
   # Environment name
   environmentName: 'APIEnv'
