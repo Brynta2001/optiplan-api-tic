@@ -36,8 +36,8 @@ stages:
       displayName: 'Install Node.js'
 
     - script: |
-        npm install
         npm install --global yarn
+        yarn install
         yarn global add @nestjs/cli
         
       displayName: 'npm install, build and test'
