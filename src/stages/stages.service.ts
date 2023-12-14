@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateStageDto } from './dto/create-stage.dto';
 import { UpdateStageDto } from './dto/update-stage.dto';
 import { Stage } from './entities/stage.entity';
-import { Board } from 'src/boards/entities/board.entity';
+import { Board } from '../boards/entities/board.entity';
 
 @Injectable()
 export class StagesService {

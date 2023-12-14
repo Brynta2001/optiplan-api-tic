@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Board } from "src/boards/entities/board.entity";
-import { Task } from "src/tasks/entities/task.entity";
+import { Board } from "../../boards/entities/board.entity";
+import { Task } from "../../tasks/entities/task.entity";
 
 @Entity()
 export class Stage {
@@ -12,7 +12,7 @@ export class Stage {
 
     @ManyToOne(
         () => Board,
-        (board) => board.stage,
+        (board) => board.stages,
         {onDelete: 'CASCADE', eager: true}
     )
     board: Board;

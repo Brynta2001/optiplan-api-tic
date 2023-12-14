@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { StagesService } from './stages.service';
 import { StagesController } from './stages.controller';
 import { Stage } from './entities/stage.entity';
-import { Board } from 'src/boards/entities/board.entity';
+import { Board } from '../boards/entities/board.entity';
 
 @Module({
   controllers: [StagesController],

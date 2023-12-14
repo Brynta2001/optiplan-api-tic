@@ -5,6 +5,8 @@ import { UpdateBoardDto } from './dto/update-board.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
 import { StagesService } from '../stages/stages.service';
+import { v4 as uuid } from 'uuid';
+import { Stage } from '../stages/entities/stage.entity';
 
 @Injectable()
 export class BoardsService {
@@ -14,30 +16,30 @@ export class BoardsService {
   constructor(
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
-
-    private readonly stageService: StagesService,
+    @InjectRepository(Stage)
+    private readonly stageRepository: Repository<Stage>,
   ){}
 
   async create(createBoardDto: CreateBoardDto) {
     try {
       const { columns, ...boardDetails } = createBoardDto;
-      const board = this.boardRepository.create(boardDetails);
-      await this.boardRepository.save(board);
-      
+
       const stages = [];
       for (let i = 0; i < columns; i++) {
-        const stage = await this.stageService.create({
-          name: `Column ${i + 1}`,
-          boardId: board.id,
-        });
+        const stage = {
+          name: `Column ${i + 1}`
+        };
         stages.push(stage);
       }
-      await Promise.all(stages);
+      console.log(columns)
 
-      return {
-        board,
-        stages: stages.map((stage) => {return {id: stage.id, name: stage.name}}),
-      };
+      const board = this.boardRepository.create({
+        ...boardDetails,
+        stages: stages.map((stage) => this.stageRepository.create({name: stage.name})),
+      });
+
+      const newBoard = await this.boardRepository.save(board);
+      return newBoard;
     } catch (error) {
       this.handleDBExceptions(error);
     }
@@ -73,7 +75,7 @@ export class BoardsService {
     if (error.code === '23505') {
       throw new BadRequestException(error.detail);
     }
-    //console.log(error)
+    console.log(error)
     this.logger.error(error)
     throw new InternalServerErrorException('Unexpected error, check server logs')
   }

@@ -4,8 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
-import { Stage } from 'src/stages/entities/stage.entity';
-import { StagesService } from 'src/stages/stages.service';
+import { StagesService } from '../stages/stages.service';
 
 @Injectable()
 export class TasksService {

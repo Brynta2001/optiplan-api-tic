@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Stage } from "src/stages/entities/stage.entity";
+import { Stage } from "../../stages/entities/stage.entity";
 
 @Entity()
 export class Task {
