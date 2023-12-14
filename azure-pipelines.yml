@@ -39,7 +39,7 @@ stages:
         npm install
         npm install --global yarn
         yarn global add @nestjs/cli
-        yarn build
+        
       displayName: 'npm install, build and test'
 
     - task: ArchiveFiles@2
