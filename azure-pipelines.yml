@@ -15,7 +15,7 @@ variables:
   webAppName: 'OptiPlanAPI'
 
   # Environment name
-  environmentName: ''
+  environmentName: 'APIEnv'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
