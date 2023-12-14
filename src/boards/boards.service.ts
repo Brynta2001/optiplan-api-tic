@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, forwardRef } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
-import { Repository } from 'typeorm';
+import { StagesService } from '../stages/stages.service';
 
 @Injectable()
 export class BoardsService {
@@ -13,6 +14,8 @@ export class BoardsService {
   constructor(
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
+
+    private readonly stageService: StagesService,
   ){}
 
   async create(createBoardDto: CreateBoardDto) {
@@ -20,11 +23,24 @@ export class BoardsService {
       const { columns, ...boardDetails } = createBoardDto;
       const board = this.boardRepository.create(boardDetails);
       await this.boardRepository.save(board);
-      return board;
+      
+      const stages = [];
+      for (let i = 0; i < columns; i++) {
+        const stage = await this.stageService.create({
+          name: `Column ${i + 1}`,
+          boardId: board.id,
+        });
+        stages.push(stage);
+      }
+      await Promise.all(stages);
+
+      return {
+        board,
+        stages: stages.map((stage) => {return {id: stage.id, name: stage.name}}),
+      };
     } catch (error) {
       this.handleDBExceptions(error);
     }
-    
   }
 
   findAll() {
@@ -39,7 +55,7 @@ export class BoardsService {
     const { columns, ...toUpdate } = updateBoardDto;
     const board = await this.boardRepository.preload({id: id, ...toUpdate})
     if (!board){
-      throw new NotFoundException(`Product with id ${id} not found`);
+      throw new NotFoundException(`Board with id ${id} not found`);
     }
     try {
       await this.boardRepository.save(board);

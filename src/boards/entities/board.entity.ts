@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Stage } from "src/stages/entities/stage.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Board {
@@ -12,4 +13,11 @@ export class Board {
         nullable: true,
     })
     description: string;
+
+    @OneToMany(
+        () => Stage,
+        (stage) => stage.board,
+        {cascade: true}
+    )
+    stage: Stage [];
 }
