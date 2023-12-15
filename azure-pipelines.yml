@@ -36,11 +36,9 @@ stages:
       displayName: 'Install Node.js'
 
     - script: |
-        
         yarn install
-        
-        
-      displayName: 'npm install, build and test'
+        yarn build
+      displayName: 'yarn install and build'
 
     - task: CopyFiles@2
       inputs:
