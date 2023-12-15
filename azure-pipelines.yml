@@ -39,6 +39,7 @@ stages:
         yarn install
         yarn build
       displayName: 'yarn install and build'
+      
 
     - task: CopyFiles@2
       inputs:
@@ -72,7 +73,7 @@ stages:
         deploy:
           steps:
           - task: AzureWebApp@1
-            displayName: 'Azure Web App Deploy: '
+            displayName: 'Azure Web App Deploy: '              
             inputs:
               azureSubscription: $(azureSubscription)
               appType: webAppLinux
