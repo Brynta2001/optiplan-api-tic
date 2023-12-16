@@ -66,6 +66,7 @@ stages:
   - deployment: Deploy
     displayName: Deploy
     environment: $(environmentName)
+    
     pool:
       vmImage: $(vmImageName)
     strategy:
@@ -73,7 +74,13 @@ stages:
         deploy:
           steps:
           - task: AzureWebApp@1
-            displayName: 'Azure Web App Deploy: '              
+            displayName: 'Azure Web App Deploy: '
+            env:
+              DB_HOST: $(DB_HOST)
+              DB_NAME: $(DB_NAME)
+              DB_PASSWORD: $(DB_PASSWORD)
+              DB_PORT: $(DB_PORT)
+              DB_USERNAME: $(DB_USERNAME)
             inputs:
               azureSubscription: $(azureSubscription)
               appType: webAppLinux
