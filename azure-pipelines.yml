@@ -12,7 +12,7 @@ variables:
   azureSubscription: 'Azure for Students(3554b79f-4c45-452f-9b6a-485c7dedcfce)'
 
   # Web app name
-  webAppName: 'optiplanepnbackend'
+  webAppName: 'backendoptiplanbd'
 
   # Environment name
   environmentName: 'APIEnv'
@@ -74,7 +74,7 @@ stages:
         deploy:
           steps:
           - task: AzureWebApp@1
-            displayName: 'Azure Web App Deploy: '
+            displayName: 'Azure Web App Deploy:'
             env:
               DB_HOST: $(DB_HOST)
               DB_NAME: $(DB_NAME)
