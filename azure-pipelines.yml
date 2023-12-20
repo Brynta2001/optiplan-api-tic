@@ -87,4 +87,4 @@ stages:
               appName: $(webAppName)
               runtimeStack: 'NODE|18.16'
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-              startUpCommand: 'pm2 start dist/main.js --no-daemon'
+              startUpCommand: 'pm2 start /home/site/wwwroot/a/dist/main.js --no-daemon'
