@@ -40,6 +40,15 @@ stages:
         yarn build
       displayName: 'yarn install and build'
       
+    - task: CopyFiles@2
+      inputs:
+        Contents: 'package*.json'
+        TargetFolder: 'dist'
+
+    - script: |
+        yarn install
+      displayName: 'yarn install in dist'
+      workingDirectory: 'dist'
 
     - task: CopyFiles@2
       inputs:
