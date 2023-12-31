@@ -21,51 +21,51 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
-- stage: Build
-  displayName: Build stage
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: $(vmImageName)
+# - stage: Build
+#   displayName: Build stage
+#   jobs:
+#   - job: Build
+#     displayName: Build
+#     pool:
+#       vmImage: $(vmImageName)
 
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '18.x'
-      displayName: 'Install Node.js'
+#     steps:
+#     - task: NodeTool@0
+#       inputs:
+#         versionSpec: '18.x'
+#       displayName: 'Install Node.js'
 
-    - script: |
-        yarn install
-        yarn build
-      displayName: 'yarn install and build'
+#     - script: |
+#         yarn install
+#         yarn build
+#       displayName: 'yarn install and build'
       
-    - task: CopyFiles@2
-      inputs:
-        Contents: 'package*.json'
-        TargetFolder: 'dist'
+#     - task: CopyFiles@2
+#       inputs:
+#         Contents: 'package*.json'
+#         TargetFolder: 'dist'
 
-    - script: |
-        yarn install
-      displayName: 'yarn install in dist'
-      workingDirectory: 'dist'
+#     - script: |
+#         yarn install
+#       displayName: 'yarn install in dist'
+#       workingDirectory: 'dist'
 
-    - task: CopyFiles@2
-      inputs:
-        Contents: 'dist/**'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    - task: ArchiveFiles@2
-      inputs:
-        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
-        includeRootFolder: true
-        archiveType: zip
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-        replaceExistingArchive: true
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact: drop'
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'drop'
+#     - task: CopyFiles@2
+#       inputs:
+#         Contents: 'dist/**'
+#         TargetFolder: '$(Build.ArtifactStagingDirectory)'
+#     - task: ArchiveFiles@2
+#       inputs:
+#         rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+#         includeRootFolder: true
+#         archiveType: zip
+#         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+#         replaceExistingArchive: true
+#     - task: PublishBuildArtifacts@1
+#       displayName: 'Publish Artifact: drop'
+#       inputs:
+#         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+#         ArtifactName: 'drop'
 
 - stage: Deploy
   displayName: Deploy stage
@@ -85,11 +85,18 @@ stages:
           - task: AzureWebApp@1
             displayName: 'Azure Web App Deploy:'
             env:
-              DB_HOST: $(DB_HOST)
-              DB_NAME: $(DB_NAME)
-              DB_PASSWORD: $(DB_PASSWORD)
-              DB_PORT: $(DB_PORT)
-              DB_USERNAME: $(DB_USERNAME)
+              DB_HOST: $(AZURE_POSTGRESQL_HOST)
+              DB_NAME: $(AZURE_POSTGRESQL_DATABASE)
+              DB_PASSWORD: $(AZURE_POSTGRESQL_PASSWORD)
+              DB_PORT: $(AZURE_POSTGRESQL_PORT)
+              DB_USERNAME: $(AZURE_POSTGRESQL_USER)
+
+              AZURE_POSTGRESQL_HOST: $(AZURE_POSTGRESQL_HOST)
+              AZURE_POSTGRESQL_DATABASE: $(AZURE_POSTGRESQL_DATABASE)
+              AZURE_POSTGRESQL_PASSWORD: $(AZURE_POSTGRESQL_PASSWORD)
+              AZURE_POSTGRESQL_PORT: $(AZURE_POSTGRESQL_PORT)
+              AZURE_POSTGRESQL_SSL: $(AZURE_POSTGRESQL_SSL)
+              AZURE_POSTGRESQL_USER: $(AZURE_POSTGRESQL_USER)
             inputs:
               azureSubscription: $(azureSubscription)
               appType: webAppLinux
