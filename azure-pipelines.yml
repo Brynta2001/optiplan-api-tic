@@ -114,5 +114,5 @@ stages:
               appName: $(webAppName)
               runtimeStack: 'NODE|18.16'
               # package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-              package: $(System.ArtifactsDirectory)/90.zip
+              package: $(System.ArtifactsDirectory)/**/*.zip
               startUpCommand: 'pm2 start /home/site/wwwroot/a/dist/main.js --no-daemon'
