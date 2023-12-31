@@ -91,7 +91,7 @@ stages:
               buildId: '90'
               downloadType: 'single'
               artifactName: 'drop'
-              itemPattern: '90.zip'
+              itemPattern: 'drop/90.zip'
               downloadPath: '$(System.ArtifactsDirectory)'
           - task: AzureWebApp@1
             displayName: 'Azure Web App Deploy:'
