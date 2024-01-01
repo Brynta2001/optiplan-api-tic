@@ -19,5 +19,5 @@ export class Board {
         (stage) => stage.board,
         {cascade: true, nullable: true}
     )
-    stages: Stage [];
+    stages?: Stage [];
 }

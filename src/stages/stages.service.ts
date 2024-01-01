@@ -23,7 +23,7 @@ export class StagesService {
 
     const board = await this.boardRepository.findOneBy({id: boardId})
     if (!board){
-      throw new NotFoundException(`Input board not found`);
+      throw new NotFoundException(`Board with id ${boardId} in which you are trying to add columns does not exist`);
     }
 
     try {
@@ -59,7 +59,7 @@ export class StagesService {
     
     const board = await this.boardRepository.findOneBy({id: boardId})
     if (!board){
-      throw new NotFoundException(`Input board not found`);
+      throw new NotFoundException(`Board with id ${boardId} in which you are trying to update a column does not exist`);
     }
 
     const stage = await this.stageRepository.preload({id: id, board, ...toUpdate})
@@ -81,9 +81,6 @@ export class StagesService {
 
   async remove(id: string) {
     const stage = await this.findOne(id);
-    if (!stage){
-      throw new NotFoundException(`Stage (column) with id ${id} not found`);
-    }
     await this.stageRepository.remove(stage);
   }
 

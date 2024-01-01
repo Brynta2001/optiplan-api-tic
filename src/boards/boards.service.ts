@@ -1,11 +1,9 @@
-import { BadRequestException, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, forwardRef } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
-import { StagesService } from '../stages/stages.service';
-import { v4 as uuid } from 'uuid';
 import { Stage } from '../stages/entities/stage.entity';
 
 @Injectable()
@@ -21,9 +19,11 @@ export class BoardsService {
   ){}
 
   async create(createBoardDto: CreateBoardDto) {
-    try {
-      const { columns, ...boardDetails } = createBoardDto;
+    const { columns, ...boardDetails } = createBoardDto;
+    if (columns < 1) throw new BadRequestException('Columns must be greater than 0');
+    if (columns > 10) throw new BadRequestException('Columns must be less than 10');
 
+    try {
       const stages = [];
       for (let i = 0; i < columns; i++) {
         const stage = {
@@ -31,7 +31,6 @@ export class BoardsService {
         };
         stages.push(stage);
       }
-      console.log(columns)
 
       const board = this.boardRepository.create({
         ...boardDetails,
@@ -75,7 +74,6 @@ export class BoardsService {
     if (error.code === '23505') {
       throw new BadRequestException(error.detail);
     }
-    console.log(error)
     this.logger.error(error)
     throw new InternalServerErrorException('Unexpected error, check server logs')
   }
