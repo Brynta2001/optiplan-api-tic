@@ -46,8 +46,8 @@ export class StagesService {
     return `This action returns all stages`;
   }
 
-  findOne(id: string) {
-    const stage = this.stageRepository.findOneBy({id: id});
+  async findOne(id: string) {
+    const stage = await this.stageRepository.findOneBy({id: id});
     if (!stage){
       throw new NotFoundException(`Stage (column) with id ${id} not found`);
     }

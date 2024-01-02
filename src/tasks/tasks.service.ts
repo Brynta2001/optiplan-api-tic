@@ -39,8 +39,8 @@ export class TasksService {
     return `This action returns all tasks`;
   }
 
-  findOne(id: string) {
-    const task = this.taskRepository.findOneBy({id});
+  async findOne(id: string) {
+    const task = await this.taskRepository.findOneBy({id});
     if (!task){
       throw new NotFoundException(`Task with id ${id} not found`);
     }
