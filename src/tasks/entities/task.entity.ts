@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Stage } from "../../stages/entities/stage.entity";
+import { User } from "src/auth/entities/user.entity";
 
 @Entity()
 export class Task {
@@ -20,4 +21,11 @@ export class Task {
         {onDelete: 'CASCADE', eager: true}
     )
     stage: Stage;
+
+    @ManyToOne(
+        () => User,
+        (user) => user.task,
+        {eager: true, nullable: true}
+    )
+    assignedTo: User;
 }

@@ -5,6 +5,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
 import { StagesService } from '../stages/stages.service';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class TasksService {
@@ -14,19 +15,23 @@ export class TasksService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     
     private readonly stageService: StagesService,
   ){}
 
   async create(createTaskDto: CreateTaskDto) {
-    const { stageId, ...taskDetails } = createTaskDto;
+    const { stageId, assignedTo, ...taskDetails } = createTaskDto;
 
     const stage = await this.stageService.findOne(stageId);
+    const user = await this.userRepository.findOneBy({id: assignedTo})
 
     try {
       const task = this.taskRepository.create({
         ...taskDetails,
         stage: stage,
+        assignedTo: user,
       });
       await this.taskRepository.save(task);
       return task;
@@ -48,11 +53,12 @@ export class TasksService {
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto) {
-    const { stageId, ...toUpdate } = updateTaskDto;
+    const { stageId, assignedTo, ...toUpdate } = updateTaskDto;
 
     const stage = await this.stageService.findOne(stageId);
+    const user = await this.userRepository.findOneBy({id: assignedTo})
 
-    const task = await this.taskRepository.preload({id: id, stage: stage, ...toUpdate})
+    const task = await this.taskRepository.preload({id: id, stage: stage, assignedTo: user, ...toUpdate})
     if (!task){
       throw new NotFoundException(`Task with id ${id} not found`);
     }

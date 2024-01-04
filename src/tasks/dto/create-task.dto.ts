@@ -11,4 +11,8 @@ export class CreateTaskDto {
 
     @IsUUID()
     stageId: string;
+
+    @IsOptional()
+    @IsUUID()
+    assignedTo: string;
 }
