@@ -96,11 +96,18 @@ stages:
           - task: AzureWebApp@1
             displayName: 'Azure Web App Deploy:'  
             env:
-              DB_HOST: $(AZURE_POSTGRESQL_HOST)
-              DB_NAME: $(AZURE_POSTGRESQL_DATABASE)
-              DB_PASSWORD: $(AZURE_POSTGRESQL_PASSWORD)
-              DB_PORT: $(AZURE_POSTGRESQL_PORT)
-              DB_USERNAME: $(AZURE_POSTGRESQL_USER)
+              # DB_HOST: $(AZURE_POSTGRESQL_HOST)
+              # DB_NAME: $(AZURE_POSTGRESQL_DATABASE)
+              # DB_PASSWORD: $(AZURE_POSTGRESQL_PASSWORD)
+              # DB_PORT: $(AZURE_POSTGRESQL_PORT)
+              # DB_USERNAME: $(AZURE_POSTGRESQL_USER)
+              # STAGE: $(STAGE)
+
+              DB_HOST: $(ELP_HOST)
+              DB_NAME: $(ELP_NAME)
+              DB_PASSWORD: $(ELP_PASSWORD)
+              DB_PORT: $(ELP_PORT)
+              DB_USERNAME: $(ELP_USERNAME)
               STAGE: $(STAGE)
 
 
