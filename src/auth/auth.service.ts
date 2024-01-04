@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { In, Repository } from 'typeorm';
 
 import * as bcrypt from "bcrypt";
 
@@ -66,7 +66,15 @@ export class AuthService {
     };
   }
 
-  private getJwtToken(payload: JwtPayload){
+  async getUsersWithLowerRoles(roles: string[]) {
+    const acceptRoles = this.returnRoles(roles);
+    return await this.userRepository.find({
+      where: { roles: In(acceptRoles) },
+      select: { email: true, fullName: true, id: true },
+    });
+  }
+
+  private getJwtToken(payload: JwtPayload) {
     const token = this.jwtService.sign(payload);
     return token;
   }
@@ -77,5 +85,20 @@ export class AuthService {
     }
     console.log(error);
     throw new InternalServerErrorException('Please check server logs');
+  }
+
+  private returnRoles(roles: string[]) {
+    if (roles.includes('admin')) {
+      return ['{business_manager}', '{area_manager}', '{area_leader}', '{technician}'];
+    }
+    if (roles.includes('business_manager')) {
+      return ['{area_manager}', '{area_leader}', '{technician}'];
+    }
+    if (roles.includes('area_manager')) {
+      return ['{area_leader}', '{technician}'];
+    }
+    if (roles.includes('area_leader')) {
+      return ['{technician}'];
+    }
   }
 }

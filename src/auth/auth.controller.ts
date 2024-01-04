@@ -2,6 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto';
+import { Auth, GetUser } from './decorators';
+import { User } from './entities/user.entity';
+import { ValidRoles } from './interfaces/valid-roles.interface';
 
 
 @Controller('auth')
@@ -16,6 +19,14 @@ export class AuthController {
   @Post('login')
   login(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
+  }
+
+  @Get('users')
+  @Auth()
+  getUsers(
+    @GetUser() user: User,
+  ) {
+    return this.authService.getUsersWithLowerRoles(user.roles);
   }
 
 }
