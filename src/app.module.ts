@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BoardsModule } from './boards/boards.module';
 import { StagesModule } from './stages/stages.module';
 import { TasksModule } from './tasks/tasks.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TasksModule } from './tasks/tasks.module';
     BoardsModule,
     StagesModule,
     TasksModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
