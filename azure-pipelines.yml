@@ -93,6 +93,14 @@ stages:
           #     artifactName: 'drop'
           #     itemPattern: '**/*.zip'
           #     downloadPath: '$(System.ArtifactsDirectory)'
+
+          - task: DownloadBuildArtifacts@1
+            inputs:
+              buildType: 'current'
+              downloadType: 'specific'
+              itemPattern: '**/*.zip'
+              downloadPath: '$(System.ArtifactsDirectory)'
+          
           - task: AzureWebApp@1
             displayName: 'Azure Web App Deploy:'  
             env:
@@ -122,6 +130,6 @@ stages:
               appType: webAppLinux
               appName: $(webAppName)
               runtimeStack: 'NODE|18.16'
-              package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-              # package: $(System.ArtifactsDirectory)/**/*.zip
+              # package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
+              package: $(System.ArtifactsDirectory)/**/*.zip
               startUpCommand: 'pm2 start /home/site/wwwroot/a/dist/main.js --no-daemon'
