@@ -61,6 +61,12 @@ stages:
         archiveType: zip
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
         replaceExistingArchive: true
+
+    - task: DeleteFiles@1
+      inputs:
+         SourceFolder: '$(Build.ArtifactStagingDirectory)'
+         Contents: '/dist'
+
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: drop'
       inputs:
@@ -104,6 +110,14 @@ stages:
           - task: AzureWebApp@1
             displayName: 'Azure Web App Deploy:'  
             env:
+              DB_HOST: $(ELP_HOST)
+              DB_NAME: $(ELP_NAME)
+              DB_PASSWORD: $(ELP_PASSWORD)
+              DB_PORT: $(ELP_PORT)
+              DB_USERNAME: $(ELP_USERNAME)
+              STAGE: $(STAGE)
+              JWT_SECRET: $(JWT_SECRET)
+
               # DB_HOST: $(AZURE_POSTGRESQL_HOST)
               # DB_NAME: $(AZURE_POSTGRESQL_DATABASE)
               # DB_PASSWORD: $(AZURE_POSTGRESQL_PASSWORD)
@@ -111,12 +125,7 @@ stages:
               # DB_USERNAME: $(AZURE_POSTGRESQL_USER)
               # STAGE: $(STAGE)
 
-              DB_HOST: $(ELP_HOST)
-              DB_NAME: $(ELP_NAME)
-              DB_PASSWORD: $(ELP_PASSWORD)
-              DB_PORT: $(ELP_PORT)
-              DB_USERNAME: $(ELP_USERNAME)
-              STAGE: $(STAGE)
+              
 
 
               # AZURE_POSTGRESQL_HOST: $(AZURE_POSTGRESQL_HOST)
@@ -129,7 +138,7 @@ stages:
               azureSubscription: $(azureSubscription)
               appType: webAppLinux
               appName: $(webAppName)
-              runtimeStack: 'NODE|18.16'
+              runtimeStack: 'NODE|18'
               # package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
               package: $(System.ArtifactsDirectory)/**/*.zip
               startUpCommand: 'pm2 start /home/site/wwwroot/a/dist/main.js --no-daemon'
