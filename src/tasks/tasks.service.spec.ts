@@ -7,7 +7,8 @@ import { Stage } from '../stages/entities/stage.entity';
 import { StagesService } from '../stages/stages.service';
 import { Board } from '../boards/entities/board.entity';
 import { BoardsService } from '../boards/boards.service';
-import { mockCreateTaskDto, mockTasks, mockUpdateTaskDto, mockStages } from '../../test/utils';
+import { User } from '../auth/entities/user.entity';
+import { mockCreateTaskDto, mockTasks, mockUpdateTaskDto, mockStages, mockUser } from '../../test/utils';
 
 describe('TasksService', () => {
   let service: TasksService;
@@ -15,10 +16,12 @@ describe('TasksService', () => {
   let taskRepository: Repository<Task>;
   let stageRepository: Repository<Stage>;
   let boardRepository: Repository<Board>;
+  let userRepository: Repository<User>;
 
   let taskRepositoryToken: string | Function = getRepositoryToken(Task);
   let stageRepositoryToken: string | Function = getRepositoryToken(Stage);
   let boardRepositoryToken: string | Function = getRepositoryToken(Board);
+  let userRepositoryToken: string | Function = getRepositoryToken(User);
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,6 +41,10 @@ describe('TasksService', () => {
           provide: boardRepositoryToken,
           useClass: Repository,
         },
+        {
+          provide: userRepositoryToken,
+          useClass: Repository,
+        },
       ],
     }).compile();
 
@@ -45,6 +52,7 @@ describe('TasksService', () => {
     taskRepository = module.get<Repository<Task>>(taskRepositoryToken);
     stageRepository = module.get<Repository<Stage>>(stageRepositoryToken);
     boardRepository = module.get<Repository<Board>>(boardRepositoryToken);
+    userRepository = module.get<Repository<User>>(userRepositoryToken);
   });
 
   it('should be defined', () => {
@@ -77,6 +85,7 @@ describe('TasksService', () => {
 
   it('should not update a task if it does not exist', async () => {
     jest.spyOn(stageRepository, 'findOneBy').mockReturnValue(Promise.resolve(mockStages[0]));
+    jest.spyOn(userRepository, 'findOneBy').mockReturnValue(Promise.resolve(mockUser));
     jest.spyOn(taskRepository, 'preload').mockReturnValue(null);
 
     try {

@@ -1,5 +1,5 @@
-import { Task } from "src/tasks/entities/task.entity";
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Task } from "../../tasks/entities/task.entity";
 
 @Entity('users')
 export class User {
