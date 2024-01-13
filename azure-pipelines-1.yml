@@ -12,7 +12,7 @@ variables:
   azureSubscription: 'Azure for Students(3554b79f-4c45-452f-9b6a-485c7dedcfce)'
 
   # Web app name
-  webAppName: 'backendoptiplanbd'
+  webAppName: 'optiplan-app'
 
   # Environment name
   environmentName: 'APIEnv'
@@ -88,17 +88,6 @@ stages:
       runOnce:
         deploy:
           steps:
-          # - task: DownloadBuildArtifacts@1
-          #   inputs:
-          #     buildType: 'specific'
-          #     project: 'aa92d4f4-3fec-4aea-8a1a-6cfa07a8f9f6'
-          #     pipeline: '3'
-          #     buildVersionToDownload: 'specific'
-          #     buildId: '90'
-          #     downloadType: 'single'
-          #     artifactName: 'drop'
-          #     itemPattern: '**/*.zip'
-          #     downloadPath: '$(System.ArtifactsDirectory)'
 
           - task: DownloadBuildArtifacts@1
             inputs:
@@ -124,9 +113,6 @@ stages:
               # DB_PORT: $(AZURE_POSTGRESQL_PORT)
               # DB_USERNAME: $(AZURE_POSTGRESQL_USER)
               # STAGE: $(STAGE)
-
-              
-
 
               # AZURE_POSTGRESQL_HOST: $(AZURE_POSTGRESQL_HOST)
               # AZURE_POSTGRESQL_DATABASE: $(AZURE_POSTGRESQL_DATABASE)
