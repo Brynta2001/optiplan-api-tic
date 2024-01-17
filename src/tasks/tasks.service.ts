@@ -22,16 +22,21 @@ export class TasksService {
   ){}
 
   async create(createTaskDto: CreateTaskDto) {
-    const { stageId, assignedTo, ...taskDetails } = createTaskDto;
+    const { stageId, assignedToId, parentTaskId, ...taskDetails } = createTaskDto;
 
     const stage = await this.stageService.findOne(stageId);
-    const user = await this.userRepository.findOneBy({id: assignedTo})
+    const assignedTo = await this.userRepository.findOneBy({id: assignedToId});
+    if (!assignedTo){
+      throw new NotFoundException(`User with id ${assignedToId} not found`);
+    }
+    const parentTask = await this.findOne(parentTaskId);    
 
     try {
       const task = this.taskRepository.create({
         ...taskDetails,
         stage: stage,
-        assignedTo: user,
+        assignedTo: assignedTo,
+        parentTask: parentTask,
       });
       await this.taskRepository.save(task);
       return task;
@@ -53,10 +58,10 @@ export class TasksService {
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto) {
-    const { stageId, assignedTo, ...toUpdate } = updateTaskDto;
+    const { stageId, assignedToId, ...toUpdate } = updateTaskDto;
 
     const stage = await this.stageService.findOne(stageId);
-    const user = await this.userRepository.findOneBy({id: assignedTo})
+    const user = await this.userRepository.findOneBy({id: assignedToId})
 
     const task = await this.taskRepository.preload({id: id, stage: stage, assignedTo: user, ...toUpdate})
     if (!task){

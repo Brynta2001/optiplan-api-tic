@@ -9,10 +9,14 @@ export class CreateTaskDto {
     @IsOptional()
     description?: string;
 
+    @IsOptional()
     @IsUUID()
-    stageId: string;
+    assignedToId?: string;
 
     @IsOptional()
     @IsUUID()
-    assignedTo: string;
+    parentTaskId?: string;
+
+    @IsUUID()
+    stageId: string;
 }

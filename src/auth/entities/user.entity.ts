@@ -30,9 +30,15 @@ export class User {
 
     @OneToMany(
         () => Task,
+        (task) => task.createdBy
+    )
+    createdTask: Task;
+
+    @OneToMany(
+        () => Task,
         (task) => task.assignedTo
     )
-    task: Task;
+    assignedTask: Task;
 
     @BeforeInsert()
     checkFieldsBeforeInsert(){
