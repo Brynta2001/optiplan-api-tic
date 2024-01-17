@@ -37,9 +37,6 @@ export class TasksService {
 
     if (parentTaskId){
       parentTask = await this.findOne(parentTaskId);
-      if (!parentTask){
-        throw new NotFoundException(`Parent task with id ${parentTaskId} not found`);
-      }
     }   
 
     try {
