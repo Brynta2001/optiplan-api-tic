@@ -5,7 +5,7 @@ import { BoardsModule } from './boards/boards.module';
 import { StagesModule } from './stages/stages.module';
 import { TasksModule } from './tasks/tasks.module';
 import { AuthModule } from './auth/auth.module';
-import { CommonModule } from './common/common.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -30,7 +30,7 @@ import { CommonModule } from './common/common.module';
     StagesModule,
     TasksModule,
     AuthModule,
-    CommonModule,
+    SeedModule,
   ],
   controllers: [],
   providers: [],

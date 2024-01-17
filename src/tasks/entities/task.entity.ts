@@ -1,8 +1,9 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
+import { Column, Entity, JoinTable, ManyToOne, OneToMany, PrimaryGeneratedColumn, TableInheritance, Tree, TreeChildren, TreeParent } from "typeorm";
 import { Stage } from "../../stages/entities/stage.entity";
 import { User } from "../../auth/entities/user.entity";
 
 @Entity()
+@Tree("closure-table")
 export class Task {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -31,20 +32,22 @@ export class Task {
         (user) => user.assignedTask,
         {eager: true, nullable: true}
     )
-    assignedTo?: User;
+    assignedTo: User;
 
-    @ManyToOne(
+    /*@ManyToOne(
         () => Task,
         (task) => task.subTasks,
-        {eager: true, nullable: true}
-    )
-    parentTask?: Task;
+        {nullable: true, onDelete: 'CASCADE'}
+    )*/
+    @TreeParent()
+    parentTask: Task;
 
-    @OneToMany(
+    /*@OneToMany(
         () => Task,
         (task) => task.parentTask,
         {nullable: true}
-    )
+    )*/
+    @TreeChildren()
     subTasks: Task[];
     
     @ManyToOne(

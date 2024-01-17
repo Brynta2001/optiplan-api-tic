@@ -6,6 +6,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
 import { StagesService } from '../stages/stages.service';
 import { User } from '../auth/entities/user.entity';
+import { LevelRoles } from 'src/auth/interfaces/roles.interface';
 
 @Injectable()
 export class TasksService {
@@ -21,15 +22,25 @@ export class TasksService {
     private readonly stageService: StagesService,
   ){}
 
-  async create(createTaskDto: CreateTaskDto) {
+  async create(createTaskDto: CreateTaskDto, user: User) {
     const { stageId, assignedToId, parentTaskId, ...taskDetails } = createTaskDto;
+    let assignedTo: User;
+    let parentTask: Task;
 
     const stage = await this.stageService.findOne(stageId);
-    const assignedTo = await this.userRepository.findOneBy({id: assignedToId});
-    if (!assignedTo){
-      throw new NotFoundException(`User with id ${assignedToId} not found`);
+    if (assignedToId){
+      assignedTo = await this.userRepository.findOneBy({id: assignedToId});
+      if (!assignedTo){
+        throw new NotFoundException(`User with id ${assignedToId} not found`);
+      }
     }
-    const parentTask = await this.findOne(parentTaskId);    
+
+    if (parentTaskId){
+      parentTask = await this.findOne(parentTaskId);
+      if (!parentTask){
+        throw new NotFoundException(`Parent task with id ${parentTaskId} not found`);
+      }
+    }   
 
     try {
       const task = this.taskRepository.create({
@@ -37,6 +48,8 @@ export class TasksService {
         stage: stage,
         assignedTo: assignedTo,
         parentTask: parentTask,
+        createdBy: user,
+        level: LevelRoles[user.roles[0]],
       });
       await this.taskRepository.save(task);
       return task;
@@ -54,6 +67,18 @@ export class TasksService {
     if (!task){
       throw new NotFoundException(`Task with id ${id} not found`);
     }
+    return task;
+  }
+
+  async findSubtasks(id: string) {
+    // const task = await this.taskRepository.manager.getTreeRepository(Task).findDescendants(await this.findOne(id));
+    const parentTask = await this.findOne(id)
+    const task = await this.taskRepository.manager
+      .getTreeRepository(Task)
+      .findDescendantsTree(parentTask, {
+        depth: 1, 
+        relations: []
+      });
     return task;
   }
 

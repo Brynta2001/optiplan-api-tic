@@ -7,9 +7,9 @@ export enum ValidRoles{
 }
 
 export enum LevelRoles{
-    businessManager = 1,
-    areaManager = 2,
-    areaLeader = 3,
-    technician = 4,
-    admin = 0,
+    'business_manager' = 1,
+    'area_manager' = 2,
+    'area_leader' = 3,
+    'technician' = 4,
+    'admin' = 0,
 }

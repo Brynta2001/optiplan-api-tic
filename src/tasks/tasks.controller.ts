@@ -2,14 +2,17 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { User } from 'src/auth/entities/user.entity';
+import { Auth, GetUser } from 'src/auth/decorators';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto);
+  @Auth()
+  create(@Body() createTaskDto: CreateTaskDto, @GetUser() user: User) {
+    return this.tasksService.create(createTaskDto, user);
   }
 
   @Get()
@@ -19,7 +22,7 @@ export class TasksController {
 
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.tasksService.findOne(id);
+    return this.tasksService.findSubtasks(id);
   }
 
   @Patch(':id')
