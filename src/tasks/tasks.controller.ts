@@ -4,20 +4,22 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { User } from 'src/auth/entities/user.entity';
 import { Auth, GetUser } from 'src/auth/decorators';
+import { ValidRoles } from 'src/auth/interfaces/roles.interface';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
-  @Auth()
+  @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader, ValidRoles.technician)
   create(@Body() createTaskDto: CreateTaskDto, @GetUser() user: User) {
     return this.tasksService.create(createTaskDto, user);
   }
 
   @Get()
-  findAll() {
-    return this.tasksService.findAll();
+  @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader, ValidRoles.technician)
+  findAll(@GetUser() user: User) {
+    return this.tasksService.findSubtasksByUser(user);
   }
 
   @Get(':id')

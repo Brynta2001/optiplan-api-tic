@@ -6,7 +6,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
 import { StagesService } from '../stages/stages.service';
 import { User } from '../auth/entities/user.entity';
-import { LevelRoles } from 'src/auth/interfaces/roles.interface';
+import { LevelRoles } from '../auth/interfaces/roles.interface';
 
 @Injectable()
 export class TasksService {
@@ -77,6 +77,35 @@ export class TasksService {
         relations: []
       });
     return task;
+  }
+
+  // TODO: Return task by assignedTo and createdBy
+  async findByUser(user: User) {
+    const tasks = await this.taskRepository.find({
+      where: [
+        //{assignedTo: {id: user.id}},
+        {createdBy: {id: user.id}},
+
+      ],
+      relations: ['assignedTo', 'createdBy', 'stage']
+    })
+    return tasks;
+  }
+
+  async findSubtasksByUser(user: User) {
+    const parentTasks = await this.findByUser(user);
+
+    parentTasks.forEach(async (task) => {
+      const subtasks = await this.taskRepository.manager
+        .getTreeRepository(Task)
+        .findDescendantsTree(task, {
+          depth: 1, 
+          relations: []
+        });
+      task = subtasks;
+    });
+
+    return parentTasks;
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto) {

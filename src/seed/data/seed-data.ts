@@ -52,5 +52,5 @@ export const initialData = {
             ],
             department: "TI"
         },
-    ]
+    ],
 }
