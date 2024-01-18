@@ -7,6 +7,7 @@ import { Task } from './entities/task.entity';
 import { StagesService } from '../stages/stages.service';
 import { User } from '../auth/entities/user.entity';
 import { LevelRoles } from '../auth/interfaces/roles.interface';
+import { Stage } from 'src/stages/entities/stage.entity';
 
 @Injectable()
 export class TasksService {
@@ -26,8 +27,12 @@ export class TasksService {
     const { stageId, assignedToId, parentTaskId, ...taskDetails } = createTaskDto;
     let assignedTo: User;
     let parentTask: Task;
+    let stage: Stage;
 
-    const stage = await this.stageService.findOne(stageId);
+    if (stageId){
+      stage = await this.stageService.findOne(stageId);
+    }
+    
     if (assignedToId){
       assignedTo = await this.userRepository.findOneBy({id: assignedToId});
       if (!assignedTo){
@@ -110,11 +115,21 @@ export class TasksService {
 
   async update(id: string, updateTaskDto: UpdateTaskDto) {
     const { stageId, assignedToId, ...toUpdate } = updateTaskDto;
+    let assignedTo: User;
+    let stage: Stage;    
 
-    const stage = await this.stageService.findOne(stageId);
-    const user = await this.userRepository.findOneBy({id: assignedToId})
+    if (stageId){
+      stage = await this.stageService.findOne(stageId);
+    }
 
-    const task = await this.taskRepository.preload({id: id, stage: stage, assignedTo: user, ...toUpdate})
+    if (assignedToId){
+      assignedTo = await this.userRepository.findOneBy({id: assignedToId});
+      if (!assignedTo){
+        throw new NotFoundException(`User with id ${assignedToId} not found`);
+      }
+    }
+
+    const task = await this.taskRepository.preload({id: id, stage: stage, assignedTo: assignedTo, ...toUpdate})
     if (!task){
       throw new NotFoundException(`Task with id ${id} not found`);
     }

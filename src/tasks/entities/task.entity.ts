@@ -34,19 +34,9 @@ export class Task {
     )
     assignedTo: User;
 
-    /*@ManyToOne(
-        () => Task,
-        (task) => task.subTasks,
-        {nullable: true, onDelete: 'CASCADE'}
-    )*/
     @TreeParent()
     parentTask: Task;
 
-    /*@OneToMany(
-        () => Task,
-        (task) => task.parentTask,
-        {nullable: true}
-    )*/
     @TreeChildren()
     subTasks: Task[];
     

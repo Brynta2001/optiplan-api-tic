@@ -99,7 +99,7 @@ export class AuthService {
     throw new InternalServerErrorException('Please check server logs');
   }
 
-  private returnRoles(roles: string[]) {
+  /*private returnRoles(roles: string[]) {
     if (roles.includes('admin')) {
       return ['{business_manager}', '{area_manager}', '{area_leader}', '{technician}'];
     }
@@ -112,5 +112,5 @@ export class AuthService {
     if (roles.includes('area_leader')) {
       return ['{technician}'];
     }
-  }
+  }*/
 }
