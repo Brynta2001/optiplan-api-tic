@@ -4,6 +4,7 @@ import { User } from 'src/auth/entities/user.entity';
 import { Repository } from 'typeorm';
 import { initialData } from './data/seed-data';
 import { Board } from 'src/boards/entities/board.entity';
+import { BoardsService } from 'src/boards/boards.service';
 
 
 @Injectable()
@@ -14,6 +15,8 @@ export class SeedService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
+
+    private readonly boardService: BoardsService,
   ){}
 
   async createUsers(){
@@ -38,14 +41,21 @@ export class SeedService {
 
   async createBoards(){
     this.deleteBoards();
-    const seedBoards = initialData.boards;
+    /*const seedBoards = initialData.boards;
     const boards: Board[] = [];
     seedBoards.forEach( board => {
       boards.push(this.boardRepository.create(board));
     })
 
     await this.boardRepository.save(boards);
-    return boards;
+    return boards;*/
+
+    const seedBoards = initialData.boards;
+    const insertPromises = [];
+    seedBoards.forEach( board => {
+      insertPromises.push(this.boardService.create(board));
+    });
+    return await Promise.all(insertPromises);
   }
 
   async deleteBoards(){
