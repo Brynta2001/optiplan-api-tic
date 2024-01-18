@@ -5,6 +5,7 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { Board } from './entities/board.entity';
 import { Stage } from '../stages/entities/stage.entity';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class BoardsService {
@@ -23,11 +24,14 @@ export class BoardsService {
     if (columns < 1) throw new BadRequestException('Columns must be greater than 0');
     if (columns > 10) throw new BadRequestException('Columns must be less than 10');
 
+    const columnNames = ['To Do', 'In Progress', 'Done', 'Column 4', 'Column 5', 'Column 6', 'Column 7', 'Column 8', 'Column 9', 'Column 10'];
+
     try {
       const stages = [];
       for (let i = 0; i < columns; i++) {
         const stage = {
-          name: `Column ${i + 1}`
+          // name: `Column ${i + 1}`
+          name: `${columnNames[i]}`
         };
         stages.push(stage);
       }
@@ -48,8 +52,19 @@ export class BoardsService {
     return `This action returns all boards`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} board`;
+  async findOne(id: string) {
+    const board = await this.boardRepository.find({
+      where: {id: id},
+      relations: ['stages'],
+    });
+    if (!board){
+      throw new NotFoundException(`Board with id ${id} not found`);
+    }
+    return board;
+  }
+
+  async findByUser(user: User) {
+
   }
 
   async update(id: string, updateBoardDto: UpdateBoardDto) {
@@ -66,8 +81,12 @@ export class BoardsService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} board`;
+  async remove(id: string) {
+    const board = await this.findOne(id);
+    if (!board){
+      throw new NotFoundException(`Board with id ${id} not found`);
+    }
+    await this.boardRepository.remove(board);
   }
 
   private handleDBExceptions(error:any){
