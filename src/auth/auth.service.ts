@@ -8,6 +8,7 @@ import * as bcrypt from "bcrypt";
 import { User } from './entities/user.entity';
 import { LoginUserDto, CreateUserDto } from './dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { LevelRoles } from './interfaces/roles.interface';
 
 
 @Injectable()
@@ -65,13 +66,25 @@ export class AuthService {
     };
   }
 
-  async getUsersWithLowerRoles(roles: string[]) {
+  // Return users with lower role than logged user
+  async getUsersWithLowerRole(role: string) {
+    const roleLevel: number = LevelRoles[role];
+    const lowerRole = Object.keys(LevelRoles).find(key => LevelRoles[key] === (roleLevel + 1));
+
+    const users = await this.userRepository.find({
+      where: { roles: In([`{${lowerRole}}`]) },
+      select: { email: true, fullName: true, id: true },
+    });
+    return users;
+  }
+
+  /*async getUsersWithLowerRoles(roles: string[]) {
     const acceptRoles = this.returnRoles(roles);
     return await this.userRepository.find({
       where: { roles: In(acceptRoles) },
       select: { email: true, fullName: true, id: true },
     });
-  }
+  }*/
 
   private getJwtToken(payload: JwtPayload) {
     const token = this.jwtService.sign(payload);

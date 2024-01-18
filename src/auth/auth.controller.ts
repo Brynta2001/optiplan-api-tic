@@ -22,12 +22,18 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
-  @Get('users')
+  /*@Get('users')
   @Auth(ValidRoles.admin)
   getUsers(
     @GetUser() user: User,
   ) {
     return this.authService.getUsersWithLowerRoles(user.roles);
+  }*/
+
+  @Get('users')
+  @Auth()
+  getUsersByRole(@GetUser() user: User) {
+    return this.authService.getUsersWithLowerRole(user.roles[0]);
   }
 
 }
