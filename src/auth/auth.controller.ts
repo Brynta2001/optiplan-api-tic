@@ -31,7 +31,7 @@ export class AuthController {
   }*/
 
   @Get('users')
-  @Auth()
+  @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader)
   getUsersByRole(@GetUser() user: User) {
     return this.authService.getUsersWithLowerRole(user.roles[0]);
   }
