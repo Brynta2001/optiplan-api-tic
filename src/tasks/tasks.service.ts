@@ -134,8 +134,8 @@ export class TasksService {
     }
 
     try {
-      await this.taskRepository.save(task);
-      return task;
+      const newTask = await this.taskRepository.save(task);
+      return newTask;
     } catch (error) {
       this.handleDBExceptions(error);
     }
