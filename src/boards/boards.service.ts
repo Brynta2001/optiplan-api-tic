@@ -48,8 +48,11 @@ export class BoardsService {
     }
   }
 
-  findAll() {
-    return `This action returns all boards`;
+  async findAll() {
+    const boards = await this.boardRepository.find({
+      relations: ['stages'],
+    });
+    return boards;
   }
 
   async findOne(id: string) {
