@@ -19,7 +19,7 @@ export class TasksController {
   @Get()
   @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader, ValidRoles.technician)
   findAll(@GetUser() user: User) {
-    return this.tasksService.findSubtasksByUser(user);
+    return this.tasksService.findByUser(user);
   }
 
   @Get(':id')

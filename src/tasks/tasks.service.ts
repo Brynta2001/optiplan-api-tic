@@ -84,13 +84,12 @@ export class TasksService {
     return task;
   }
 
-  // TODO: Return task by assignedTo and createdBy
+  // Return task by createdBy
   async findByUser(user: User) {
     const tasks = await this.taskRepository.find({
       where: [
         //{assignedTo: {id: user.id}},
         {createdBy: {id: user.id}},
-
       ],
       relations: ['assignedTo', 'createdBy', 'stage']
     })
