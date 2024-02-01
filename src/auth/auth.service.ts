@@ -30,7 +30,7 @@ export class AuthService {
     try {
       const { password, roles, ...userData } = createUserDto;
       
-      const userRoles = await this.roleRepository.find({where: {name: In(roles)}});
+      const userRoles = await this.getRolesByName(roles);
       
       // User creation
       const user = this.userRepository.create({
@@ -59,8 +59,8 @@ export class AuthService {
     return await this.roleRepository.find();
   }
 
-  async getRoleByName(name: string){
-    return await this.roleRepository.findOneBy({name});
+  private async getRolesByName(roles: string[]){
+    return await this.roleRepository.find({where: {name: In(roles)}});
   }
 
   /*async login(loginUserDto: LoginUserDto) {
