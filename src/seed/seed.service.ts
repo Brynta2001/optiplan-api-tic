@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { initialData } from './data/seed-data';
 import { Board } from 'src/boards/entities/board.entity';
 import { BoardsService } from 'src/boards/boards.service';
+import { Role } from 'src/auth/entities/role.entity';
 
 
 @Injectable()
@@ -15,6 +16,8 @@ export class SeedService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>,
 
     private readonly boardService: BoardsService,
   ){}
@@ -64,5 +67,14 @@ export class SeedService {
       .delete()
       .where({})
       .execute();
+  }
+
+  async createRoles(){
+    const seedRoles = initialData.roles;
+    const roles = seedRoles.map( role => {
+      return this.roleRepository.create(role);
+    });
+
+    return await this.roleRepository.save(roles);;
   }
 }

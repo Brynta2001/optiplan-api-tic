@@ -1,5 +1,5 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Task } from "../../tasks/entities/task.entity";
+import { Account } from "./account.entity";
 
 @Entity('users')
 export class User {
@@ -19,26 +19,14 @@ export class User {
     @Column('text')
     fullName: string;
 
-    @Column('text', {
-        array: true,
-        default: ['technician']
-    })
-    roles: string[];
-
     @Column('text')
     department: string;
 
     @OneToMany(
-        () => Task,
-        (task) => task.createdBy
+        () => Account,
+        (account) => account.user
     )
-    createdTask: Task;
-
-    @OneToMany(
-        () => Task,
-        (task) => task.assignedTo
-    )
-    assignedTask: Task;
+    account: Account;
 
     @BeforeInsert()
     checkFieldsBeforeInsert(){

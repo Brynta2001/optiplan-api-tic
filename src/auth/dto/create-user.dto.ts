@@ -18,6 +18,10 @@ export class CreateUserDto {
     @MinLength(1)
     fullName: string;
 
+    // @IsArray()
+    // @IsIn(['business_manager', 'area_manager', 'area_leader', 'technician', 'admin'], {
+    //     each: true,
+    // })
     @IsArray()
     @IsIn(['business_manager', 'area_manager', 'area_leader', 'technician', 'admin'], {
         each: true,

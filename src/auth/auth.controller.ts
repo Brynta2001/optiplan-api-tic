@@ -19,7 +19,7 @@ export class AuthController {
 
   @Post('login')
   login(@Body() loginUserDto: LoginUserDto) {
-    return this.authService.login(loginUserDto);
+    //return this.authService.login(loginUserDto);
   }
 
   /*@Get('users')
@@ -33,7 +33,12 @@ export class AuthController {
   @Get('users')
   @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader)
   getUsersByRole(@GetUser() user: User) {
-    return this.authService.getUsersWithLowerRole(user.roles[0]);
+    //return this.authService.getUsersWithLowerRole(user.roles[0]);
+  }
+
+  @Get('roles')
+  getRoles() {
+    return this.authService.getAllRoles();
   }
 
 }

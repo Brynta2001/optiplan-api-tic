@@ -9,36 +9,61 @@ import { User } from './entities/user.entity';
 import { LoginUserDto, CreateUserDto } from './dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { LevelRoles } from './interfaces/roles.interface';
+import { Role } from './entities/role.entity';
+import { Account } from './entities/account.entity';
 
 
 @Injectable()
 export class AuthService {
 
   constructor(
+    @InjectRepository(Account)
+    private readonly accountRepository: Repository<Account>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>,
     private readonly jwtService: JwtService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const { password, ...userData } = createUserDto;
-      const user = await this.userRepository.create({
+      const { password, roles, ...userData } = createUserDto;
+      
+      const userRoles = await this.roleRepository.find({where: {name: In(roles)}});
+      
+      // User creation
+      const user = this.userRepository.create({
         ...userData,
         password: bcrypt.hashSync(password, 10),
       });
+      const userCreated = await this.userRepository.save(user);
 
-      await this.userRepository.save(user);
-      delete user.password;
-      return {
-        ...user,
-      };
+      // Accounts creation
+      const accounts: Account[] = [];
+      userRoles.forEach(role => {
+        const account = this.accountRepository.create({
+          role,
+          user: userCreated,
+        });
+        accounts.push(account);
+      });
+
+      return await this.accountRepository.save(accounts);
     } catch (error) {
       this.handleDBError(error);
     }
   }
 
-  async login(loginUserDto: LoginUserDto) {
+  async getAllRoles(){
+    return await this.roleRepository.find();
+  }
+
+  async getRoleByName(name: string){
+    return await this.roleRepository.findOneBy({name});
+  }
+
+  /*async login(loginUserDto: LoginUserDto) {
     const { email, password, role } = loginUserDto;
 
     const user = await this.userRepository.findOne({
@@ -80,7 +105,7 @@ export class AuthService {
       select: { email: true, fullName: true, id: true },
     });
     return users;
-  }
+  }*/
 
   /*async getUsersWithLowerRoles(roles: string[]) {
     const acceptRoles = this.returnRoles(roles);

@@ -15,4 +15,9 @@ export class SeedController {
     return this.seedService.createBoards();
   }
 
+  @Get('roles')
+  createRoles() {
+    return this.seedService.createRoles();
+  }
+
 }
