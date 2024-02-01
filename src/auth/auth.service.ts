@@ -49,7 +49,12 @@ export class AuthService {
         accounts.push(account);
       });
 
-      return await this.accountRepository.save(accounts);
+      await this.accountRepository.save(accounts);
+      delete userCreated.password
+      return {
+        ...userCreated,
+        roles,
+      }
     } catch (error) {
       this.handleDBError(error);
     }
@@ -63,49 +68,62 @@ export class AuthService {
     return await this.roleRepository.find({where: {name: In(roles)}});
   }
 
-  /*async login(loginUserDto: LoginUserDto) {
+  async login(loginUserDto: LoginUserDto) {
     const { email, password, role } = loginUserDto;
 
     const user = await this.userRepository.findOne({
-      where: {email},
-      select: {
-        email: true, 
-        password: true, 
-        fullName: true,
-        roles: true,
-        department: true,
-        id: true
-      },
+      where: {email}
     });
 
-    if (!user){
-      throw new UnauthorizedException('Credentials are not valid (email)');
+    const account = await this.accountRepository.findOne({
+      where: {
+        user: {id: user.id},
+        role: {name: role},
+      },
+      select: {
+        user: {
+          email: true, 
+          password: true,
+          fullName: true,
+          department: true,
+          id: true,
+        },
+        role: {
+          name: true,
+        },
+        id: true,
+      },
+      relations: ['user', 'role'],
+    });
+
+    // Email (user) or role are not valid
+    if (!user || !account){
+      throw new UnauthorizedException('Credentials are not valid (account)');
     }
-    if (!bcrypt.compareSync(password, user.password)) {
+    if (!bcrypt.compareSync(password, account.user.password)) {
       throw new UnauthorizedException('Credentials are not valid (password)');
-    }
-    if (!user.roles.includes(role)) {
-      throw new UnauthorizedException('Credentials are not valid (role)');
     }
 
     return {
-      ...user,
-      role,
-      token: this.getJwtToken({id: user.id, role})
+      email: account.user.email,
+      fullName: account.user.fullName,
+      department: account.user.department,
+      role: account.role.name,
+      token: this.getJwtToken({id: account.id}),
     };
   }
-
+ 
   // Return users with lower role than logged user
-  async getUsersWithLowerRole(role: string) {
-    const roleLevel: number = LevelRoles[role];
-    const lowerRole = Object.keys(LevelRoles).find(key => LevelRoles[key] === (roleLevel + 1));
+  // async getUsersWithLowerRole(role: string) {
+  //   const roleLevel: number = LevelRoles[role];
+  //   const lowerRole = Object.keys(LevelRoles).find(key => LevelRoles[key] === (roleLevel + 1));
 
-    const users = await this.userRepository.find({
-      where: { roles: In([`{${lowerRole}}`]) },
-      select: { email: true, fullName: true, id: true },
-    });
-    return users;
-  }*/
+  //   const users = await this.userRepository.find({
+  //     where: { roles: In([`{${lowerRole}}`]) },
+  //     select: { email: true, fullName: true, id: true },
+  //   });
+  //   return users;
+  // }
 
   /*async getUsersWithLowerRoles(roles: string[]) {
     const acceptRoles = this.returnRoles(roles);

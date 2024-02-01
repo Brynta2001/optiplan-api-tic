@@ -6,12 +6,13 @@ import { Repository } from "typeorm";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { User } from "../entities/user.entity";
 import { JwtPayload } from "../interfaces/jwt-payload.interface";
+import { Account } from "../entities/account.entity";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
+        @InjectRepository(Account)
+        private readonly accountRepository: Repository<Account>,
         configService: ConfigService,
     ){
         super({
@@ -20,14 +21,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         });
     }
 
-    async validate(payload: JwtPayload): Promise<User>{
-        const { id, role } = payload;
-        const user = await this.userRepository.findOneBy({id});
-        if (!user){
+    async validate(payload: JwtPayload): Promise<Account>{
+        const { id } = payload;
+        const account = await this.accountRepository.findOneBy({id});
+        if (!account){
             throw new UnauthorizedException('Token not valid');
         }
-        user.roles = [role];
         // Lo que se retorne se añade al request
-        return user;
+        return account;
     }
 }

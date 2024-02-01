@@ -1,8 +1,8 @@
 import { BadRequestException, CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
-import { User } from '../entities/user.entity';
 import { META_ROLES } from '../decorators/role-protected.decorator';
+import { Account } from '../entities/account.entity';
 
 @Injectable()
 export class UserRoleGuard implements CanActivate {
@@ -21,18 +21,16 @@ export class UserRoleGuard implements CanActivate {
     if ( validRoles.length === 0 ) return true;
 
     const req = context.switchToHttp().getRequest();
-    const user = req.user as User;
+    const account = req.account as Account;
 
-    if(!user){
-      throw new BadRequestException('User not found')
+    if(!account){
+      throw new BadRequestException('Account not found')
     }
 
-    for (const role of user.roles) {
-      if (validRoles.includes(role)) {
-        return true;
-      }
+    if (validRoles.includes(account.role.name)) {
+      return true;
     }
 
-    throw new ForbiddenException(`User ${user.email} need a valid role: [${validRoles}]`);
+    throw new ForbiddenException(`Account ${account.user.email} need a valid role: [${validRoles}]`);
   }
 }
