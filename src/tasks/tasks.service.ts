@@ -13,7 +13,7 @@ import { Stage } from 'src/stages/entities/stage.entity';
 export class TasksService {
 
   private readonly logger = new Logger('TasksService')
-
+  
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
@@ -23,7 +23,7 @@ export class TasksService {
     private readonly stageService: StagesService,
   ){}
 
-  async create(createTaskDto: CreateTaskDto, user: User) {
+  /*async create(createTaskDto: CreateTaskDto, user: User) {
     const { stageId, assignedToId, parentTaskId, ...taskDetails } = createTaskDto;
     let assignedTo: User;
     let parentTask: Task;
@@ -58,7 +58,7 @@ export class TasksService {
     } catch (error) {
       this.handleDBExceptions(error);
     }
-  }
+  }*/
 
   findAll() {
     return `This action returns all tasks`;

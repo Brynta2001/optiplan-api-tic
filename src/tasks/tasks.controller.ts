@@ -10,11 +10,11 @@ import { ValidRoles } from 'src/auth/interfaces/roles.interface';
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
-  @Post()
+  /*@Post()
   @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader, ValidRoles.technician)
   create(@Body() createTaskDto: CreateTaskDto, @GetUser() user: User) {
     return this.tasksService.create(createTaskDto, user);
-  }
+  }*/
 
   @Get()
   @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader, ValidRoles.technician)

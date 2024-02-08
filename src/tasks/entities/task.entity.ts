@@ -20,18 +20,18 @@ export class Task {
     @Column('int')
     level: number;
 
-    @ManyToOne(
-        () => User,
-        (user) => user.createdTask,
+    /*@ManyToOne(
+        () => UserRole,
+        (userRole) => userRole.createdTask,
         {eager: true}
-    )
+    )*/
     createdBy: User;
 
-    @ManyToOne(
-        () => User,
-        (user) => user.assignedTask,
+    /*@ManyToOne(
+        () => UserRole,
+        (userRole) => userRole.assignedTask,
         {eager: true, nullable: true}
-    )
+    )*/
     assignedTo: User;
 
     @TreeParent()
