@@ -2,9 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto';
-import { Auth, GetUser } from './decorators';
+import { Auth, GetAccount } from './decorators';
 import { User } from './entities/user.entity';
 import { ValidRoles } from './interfaces/roles.interface';
+import { Account } from './entities/account.entity';
 
 
 @Controller('auth')
@@ -22,23 +23,14 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
-  /*@Get('users')
-  @Auth(ValidRoles.admin)
-  getUsers(
-    @GetUser() user: User,
-  ) {
-    return this.authService.getUsersWithLowerRoles(user.roles);
-  }*/
-
-  @Get('users')
+  @Get('lower-role-users')
   @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader)
-  getUsersByRole(@GetUser() user: User) {
-    //return this.authService.getUsersWithLowerRole(user.roles[0]);
+  getUsersByRole(@GetAccount() account: Account) {
+    return this.authService.getUsersWithLowerRole(account.role);
   }
 
   @Get('roles')
   getRoles() {
     return this.authService.getAllRoles();
   }
-
 }
