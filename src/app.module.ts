@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BoardsModule } from './boards/boards.module';
-import { StagesModule } from './stages/stages.module';
 import { TasksModule } from './tasks/tasks.module';
 import { AuthModule } from './auth/auth.module';
 import { SeedModule } from './seed/seed.module';
+import { ProjectsModule } from './projects/projects.module';
+import { StatesModule } from './states/states.module';
 
 @Module({
   imports: [
@@ -26,11 +26,11 @@ import { SeedModule } from './seed/seed.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    BoardsModule,
-    StagesModule,
     TasksModule,
     AuthModule,
     SeedModule,
+    ProjectsModule,
+    StatesModule,
   ],
   controllers: [],
   providers: [],
