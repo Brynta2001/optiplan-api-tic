@@ -1,9 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto';
+import { CreateAccountDto } from './dto/create-account.dto';
+import { LoginAccountDto } from './dto';
 import { Auth, GetAccount } from './decorators';
-import { User } from './entities/user.entity';
 import { ValidRoles } from './interfaces/roles.interface';
 import { Account } from './entities/account.entity';
 
@@ -14,13 +13,13 @@ export class AuthController {
 
   @Post('register')
   //@Auth(ValidRoles.admin)
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.authService.create(createUserDto);
+  create(@Body() createAccountDto: CreateAccountDto) {
+    return this.authService.create(createAccountDto);
   }
 
   @Post('login')
-  login(@Body() loginUserDto: LoginUserDto) {
-    return this.authService.login(loginUserDto);
+  login(@Body() loginAccountDto: LoginAccountDto) {
+    return this.authService.login(loginAccountDto);
   }
 
   @Get('lower-role-users')

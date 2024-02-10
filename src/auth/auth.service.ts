@@ -6,7 +6,7 @@ import { In, Repository } from 'typeorm';
 import * as bcrypt from "bcrypt";
 
 import { User } from './entities/user.entity';
-import { LoginUserDto, CreateUserDto } from './dto';
+import { LoginAccountDto, CreateAccountDto } from './dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { Role } from './entities/role.entity';
 import { Account } from './entities/account.entity';
@@ -25,9 +25,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createAccountDto: CreateAccountDto) {
     try {
-      const { password, roles, ...userData } = createUserDto;
+      const { password, roles, ...userData } = createAccountDto;
       
       const userRoles = await this.getRolesByName(roles);
       
@@ -67,8 +67,8 @@ export class AuthService {
     return await this.roleRepository.find({where: {name: In(roles)}});
   }
 
-  async login(loginUserDto: LoginUserDto) {
-    const { email, password, role } = loginUserDto;
+  async login(loginAccountDto: LoginAccountDto) {
+    const { email, password, role } = loginAccountDto;
 
     const user = await this.userRepository.findOne({
       where: {email}

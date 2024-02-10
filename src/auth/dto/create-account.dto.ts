@@ -1,7 +1,7 @@
 import { IsArray, IsEmail, IsIn, IsString, Matches, MaxLength, Min, MinLength } from "class-validator";
 import { ValidRoles } from "../interfaces/roles.interface";
 
-export class CreateUserDto {
+export class CreateAccountDto {
     @IsEmail()
     email: string;
 
