@@ -11,14 +11,14 @@ export class Account {
     @ManyToOne(
         () => User,
         (user) => user.account,
-        {}
+        { eager: true }
     )
     user: User;
 
     @ManyToOne(
         () => Role,
         (role) => role.account,
-        {}
+        { eager: true }
     )
     role: Role;
 

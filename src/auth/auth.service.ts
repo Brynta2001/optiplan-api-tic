@@ -117,7 +117,7 @@ export class AuthService {
     const roleLevel: number = role.level;
     const lowerRole = await this.roleRepository.findOne({where: {level: roleLevel + 1}});
     const accountsLowerRole = await this.accountRepository.find({
-      where: { role: In([lowerRole]) },
+      where: { role: {id: lowerRole.id} },
       select: { user: { email: true, fullName: true, id: true } },
       relations: ['user'],
     });
