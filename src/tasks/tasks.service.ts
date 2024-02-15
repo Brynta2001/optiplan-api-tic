@@ -1,37 +1,46 @@
+import { Equal, Repository } from 'typeorm';
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
-import { User } from '../auth/entities/user.entity';
+import { Account } from '../auth/entities/account.entity';
+import { State } from '../states/entities/state.entity';
+import { ProjectsService } from '../projects/projects.service';
+import { StatesService } from '../states/states.service';
+import { Project } from '../projects/entities/project.entity';
 
 @Injectable()
 export class TasksService {
 
-  private readonly logger = new Logger('TasksService')
+  private readonly logger = new Logger(TasksService.name)
   
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(Account)
+    private readonly accountRepository: Repository<Account>,
+    private readonly projectService: ProjectsService,
+    private readonly stateService: StatesService,
   ){}
 
-  /*async create(createTaskDto: CreateTaskDto, user: User) {
-    const { stageId, assignedToId, parentTaskId, ...taskDetails } = createTaskDto;
-    let assignedTo: User;
+  async create(createTaskDto: CreateTaskDto, account: Account) {
+    const { projectId, stateId, assignedToId, parentTaskId, ...taskDetails } = createTaskDto;
+    
+    let state: State;
+    let assignedTo: Account;
     let parentTask: Task;
-    let stage: Stage;
 
-    if (stageId){
-      stage = await this.stageService.findOne(stageId);
+    const project = await this.projectService.findOne(projectId);
+
+    if (stateId){
+      state = await this.stateService.findOne(stateId);
     }
     
     if (assignedToId){
-      assignedTo = await this.userRepository.findOneBy({id: assignedToId});
+      assignedTo = await this.accountRepository.findOneBy({id: assignedToId});
       if (!assignedTo){
-        throw new NotFoundException(`User with id ${assignedToId} not found`);
+        throw new NotFoundException(`Account with id ${assignedToId} not found`);
       }
     }
 
@@ -42,18 +51,18 @@ export class TasksService {
     try {
       const task = this.taskRepository.create({
         ...taskDetails,
-        stage: stage,
-        assignedTo: assignedTo,
-        parentTask: parentTask,
-        createdBy: user,
-        level: LevelRoles[user.roles[0]],
+        project,
+        state,
+        createdBy: account,
+        assignedTo,
+        parentTask,
       });
       await this.taskRepository.save(task);
       return task;
     } catch (error) {
       this.handleDBExceptions(error);
     }
-  }*/
+  }
 
   findAll() {
     return `This action returns all tasks`;
@@ -65,6 +74,54 @@ export class TasksService {
       throw new NotFoundException(`Task with id ${id} not found`);
     }
     return task;
+  }
+
+  async update(id: string, updateTaskDto: UpdateTaskDto) {
+    const { projectId, stateId, assignedToId, parentTaskId, ...taskDetails } = updateTaskDto;
+
+    let project: Project;
+    let state: State;
+    let assignedTo: Account;
+    let parentTask: Task;
+
+    if (projectId){
+      project = await this.projectService.findOne(projectId);
+    }
+
+    if (stateId){
+      state = await this.stateService.findOne(stateId);
+    }
+
+    if (assignedToId){
+      assignedTo = await this.accountRepository.findOneBy({id: assignedToId});
+      if (!assignedTo){
+        throw new NotFoundException(`Account with id ${assignedToId} not found`);
+      }
+    }
+
+    const task = await this.taskRepository.preload({
+      id: id, 
+      ...taskDetails,
+      project,
+      state,
+      assignedTo,
+      parentTask,
+    });
+    
+    if (!task){
+      throw new NotFoundException(`Task with id ${id} not found`);
+    }
+
+    try {
+      return await this.taskRepository.save(task);
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+  }
+
+  async remove(id: string) {
+    const task = await this.findOne(id);
+    return await this.taskRepository.remove(task);
   }
 
   async findSubtasks(id: string) {
@@ -80,19 +137,19 @@ export class TasksService {
   }
 
   // Return task by createdBy
-  async findByUser(user: User) {
+  async findByUser(account: Account) {
     const tasks = await this.taskRepository.find({
       where: [
         //{assignedTo: {id: user.id}},
-        {createdBy: {id: user.id}},
+        {createdBy: Equal(account)},
       ],
-      relations: ['assignedTo', 'createdBy', 'stage']
+      relations: ['assignedTo', 'createdBy', 'state']
     })
     return tasks;
   }
 
-  async findSubtasksByUser(user: User) {
-    const parentTasks = await this.findByUser(user);
+  async findSubtasksByUser(account: Account) {
+    const parentTasks = await this.findByUser(account);
 
     parentTasks.forEach(async (task) => {
       const subtasks = await this.taskRepository.manager
@@ -107,49 +164,10 @@ export class TasksService {
     return parentTasks;
   }
 
-  // async update(id: string, updateTaskDto: UpdateTaskDto) {
-  //   const { stageId, assignedToId, ...toUpdate } = updateTaskDto;
-  //   let assignedTo: User;
-  //   let stage: Stage;    
-
-  //   if (stageId){
-  //     stage = await this.stageService.findOne(stageId);
-  //   }
-
-  //   if (assignedToId){
-  //     assignedTo = await this.userRepository.findOneBy({id: assignedToId});
-  //     if (!assignedTo){
-  //       throw new NotFoundException(`User with id ${assignedToId} not found`);
-  //     }
-  //   }
-
-  //   const task = await this.taskRepository.preload({id: id, stage: stage, assignedTo: assignedTo, ...toUpdate})
-  //   if (!task){
-  //     throw new NotFoundException(`Task with id ${id} not found`);
-  //   }
-
-  //   try {
-  //     const newTask = await this.taskRepository.save(task);
-  //     return newTask;
-  //   } catch (error) {
-  //     this.handleDBExceptions(error);
-  //   }
-
-  // }
-
-  async remove(id: string) {
-    const task = await this.findOne(id);
-    if (!task){
-      throw new NotFoundException(`Task with id ${id} not found`);
-    }
-    await this.taskRepository.remove(task);
-  }
-
   private handleDBExceptions(error:any){
     if (error.code === '23505') {
       throw new BadRequestException(error.detail);
     }
-    //console.log(error)
     this.logger.error(error)
     throw new InternalServerErrorException('Unexpected error, check server logs')
   }

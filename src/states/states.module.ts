@@ -14,5 +14,6 @@ import { ProjectsModule } from 'src/projects/projects.module';
     AuthModule,
     ProjectsModule,
   ],
+  exports: [StatesService],
 })
 export class StatesModule {}

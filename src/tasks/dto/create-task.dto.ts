@@ -9,6 +9,13 @@ export class CreateTaskDto {
     @IsOptional()
     description?: string;
 
+    @IsUUID()
+    projectId: string;
+
+    @IsOptional()
+    @IsUUID()
+    stateId?: string;
+
     @IsOptional()
     @IsUUID()
     assignedToId?: string;
@@ -16,8 +23,4 @@ export class CreateTaskDto {
     @IsOptional()
     @IsUUID()
     parentTaskId?: string;
-
-    @IsOptional()
-    @IsUUID()
-    stageId?: string;
 }
