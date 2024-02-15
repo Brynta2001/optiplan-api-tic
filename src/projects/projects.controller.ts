@@ -27,16 +27,19 @@ export class ProjectsController {
   }
 
   @Get(':id')
+  @Auth()
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.projectsService.findOne(id);
   }
 
   @Patch(':id')
+  @Auth()
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateProjectDto: UpdateProjectDto) {
     return this.projectsService.update(id, updateProjectDto);
   }
 
   @Delete(':id')
+  @Auth()
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.projectsService.remove(id);
   }
