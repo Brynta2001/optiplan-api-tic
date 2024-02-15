@@ -140,8 +140,8 @@ export class TasksService {
   async findByUser(account: Account) {
     const tasks = await this.taskRepository.find({
       where: [
-        //{assignedTo: {id: user.id}},
-        {createdBy: Equal(account)},
+        {assignedTo: {id: account.id}},
+        {createdBy: {id: account.id}},
       ],
       relations: ['assignedTo', 'createdBy', 'state']
     })

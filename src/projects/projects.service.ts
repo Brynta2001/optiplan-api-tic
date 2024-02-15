@@ -31,7 +31,7 @@ export class ProjectsService {
   async findAll(account: Account) {
     try {
       return await this.projectRepository.find({
-        where: { createdBy: Equal(account) },
+        where: { createdBy: {id: account.id} },
       });
     } catch (error) {
       this.handleDBExceptions(error);
