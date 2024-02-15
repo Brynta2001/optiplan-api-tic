@@ -63,6 +63,11 @@ export class ProjectsService {
     return await this.projectRepository.remove(project);
   }
 
+  async findStates(id: string) {
+    const project = await this.findOne(id);
+    return project.states;
+  }
+
   private handleDBExceptions(error:any){
     if (error.code === '23505') {
       throw new BadRequestException(error.detail);

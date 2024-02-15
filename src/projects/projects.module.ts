@@ -12,5 +12,6 @@ import { AuthModule } from 'src/auth/auth.module';
     TypeOrmModule.forFeature([Project]),
     AuthModule,
   ],
+  exports: [ProjectsService],
 })
 export class ProjectsModule {}
