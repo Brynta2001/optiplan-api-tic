@@ -10,6 +10,6 @@ export class CreateProjectDto {
     description: string;
 
     @IsString()
-    @Length(4, 4)
+    @Length(3, 3)
     code: string;
 }
