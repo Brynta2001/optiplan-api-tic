@@ -2,9 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { User } from 'src/auth/entities/user.entity';
-import { Auth, GetUser } from 'src/auth/decorators';
+import { User } from '../auth/entities/user.entity';
 import { ValidRoles } from 'src/auth/interfaces/roles.interface';
+import { Auth, GetAccount } from '../auth/decorators';
 
 @Controller('tasks')
 export class TasksController {
@@ -18,7 +18,7 @@ export class TasksController {
 
   @Get()
   @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader, ValidRoles.technician)
-  findAll(@GetUser() user: User) {
+  findAll(@GetAccount() user: User) {
     return this.tasksService.findByUser(user);
   }
 
@@ -30,7 +30,7 @@ export class TasksController {
   @Patch(':id')
   @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader, ValidRoles.technician)
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.tasksService.update(id, updateTaskDto);
+    //return this.tasksService.update(id, updateTaskDto);
   }
 
   @Delete(':id')

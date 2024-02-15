@@ -10,11 +10,6 @@ export class SeedController {
     return this.seedService.createUsers();
   }
 
-  @Get('boards')
-  createBoards() {
-    return this.seedService.createBoards();
-  }
-
   @Get('roles')
   createRoles() {
     return this.seedService.createRoles();

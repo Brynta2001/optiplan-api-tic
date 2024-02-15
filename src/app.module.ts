@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { SeedModule } from './seed/seed.module';
 import { ProjectsModule } from './projects/projects.module';
 import { StatesModule } from './states/states.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { StatesModule } from './states/states.module';
     SeedModule,
     ProjectsModule,
     StatesModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],

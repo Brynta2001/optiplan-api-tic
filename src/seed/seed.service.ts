@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { initialData } from './data/seed-data';
-import { Board } from 'src/boards/entities/board.entity';
-import { BoardsService } from 'src/boards/boards.service';
 import { Role } from 'src/auth/entities/role.entity';
+import { Account } from 'src/auth/entities/account.entity';
 
 
 @Injectable()
@@ -14,24 +13,33 @@ export class SeedService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Board)
-    private readonly boardRepository: Repository<Board>,
+    @InjectRepository(Account)
+    private readonly accountRepository: Repository<Account>,
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
 
-    private readonly boardService: BoardsService,
   ){}
 
   async createUsers(){
+    this.deleteAccounts();
     this.deleteUsers();
-    const seedUsers = initialData.users;
-    const users: User[] = [];
-    seedUsers.forEach( user => {
-      users.push(this.userRepository.create(user));
+    const seedAccounts = initialData.accounts;
+    const accounts: Account[] = [];
+    seedAccounts.forEach( async account => {
+      const {roles, ...userData} = account;
+      const user = this.userRepository.create(userData)
+      const userRoles = await this.getRolesByName(roles);
+      userRoles.forEach(role => {
+        const account = this.accountRepository.create({
+          role,
+          user: user,
+        });
+        accounts.push(account);
+      });
     })
 
-    await this.userRepository.save(users);
-    return users;
+    await this.userRepository.save(accounts);
+    return accounts;
   }
 
   async deleteUsers(){
@@ -42,27 +50,8 @@ export class SeedService {
       .execute();
   }
 
-  async createBoards(){
-    this.deleteBoards();
-    /*const seedBoards = initialData.boards;
-    const boards: Board[] = [];
-    seedBoards.forEach( board => {
-      boards.push(this.boardRepository.create(board));
-    })
-
-    await this.boardRepository.save(boards);
-    return boards;*/
-
-    const seedBoards = initialData.boards;
-    const insertPromises = [];
-    seedBoards.forEach( board => {
-      insertPromises.push(this.boardService.create(board));
-    });
-    return await Promise.all(insertPromises);
-  }
-
-  async deleteBoards(){
-    const queryBuilder = this.boardRepository.createQueryBuilder();
+  async deleteAccounts(){
+    const queryBuilder = this.accountRepository.createQueryBuilder();
     await queryBuilder
       .delete()
       .where({})
@@ -76,5 +65,9 @@ export class SeedService {
     });
 
     return await this.roleRepository.save(roles);;
+  }
+
+  private async getRolesByName(roles: string[]){
+    return await this.roleRepository.find({where: {name: In(roles)}});
   }
 }

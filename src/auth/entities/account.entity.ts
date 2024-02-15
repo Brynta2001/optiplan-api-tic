@@ -1,7 +1,8 @@
 import { Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 import { Role } from "./role.entity";
-import { Task } from "src/tasks/entities/task.entity";
+import { Task } from "../../tasks/entities/task.entity";
+import { Project } from "../../projects/entities/project.entity";
 
 @Entity('accounts')
 export class Account {
@@ -22,15 +23,22 @@ export class Account {
     )
     role: Role;
 
-    /*@OneToMany(
-        () => Task,
-        (task) => task.createdBy
+    @OneToMany(
+        () => Project,
+        (project) => project.createdBy,
+        {  },
     )
-    createdTask: Task;
+    projects: Project[];
 
     @OneToMany(
         () => Task,
-        (task) => task.assignedTo
+        (task) => task.createdBy,
     )
-    assignedTask: Task;*/
+    createdTasks: Task[];
+
+    @OneToMany(
+        () => Task,
+        (task) => task.assignedTo,
+    )
+    assignedTasks: Task[];
 }

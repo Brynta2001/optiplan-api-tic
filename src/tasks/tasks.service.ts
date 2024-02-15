@@ -4,10 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
-import { StagesService } from '../stages/stages.service';
 import { User } from '../auth/entities/user.entity';
-import { LevelRoles } from '../auth/interfaces/roles.interface';
-import { Stage } from 'src/stages/entities/stage.entity';
 
 @Injectable()
 export class TasksService {
@@ -19,8 +16,6 @@ export class TasksService {
     private readonly taskRepository: Repository<Task>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    
-    private readonly stageService: StagesService,
   ){}
 
   /*async create(createTaskDto: CreateTaskDto, user: User) {
@@ -112,35 +107,35 @@ export class TasksService {
     return parentTasks;
   }
 
-  async update(id: string, updateTaskDto: UpdateTaskDto) {
-    const { stageId, assignedToId, ...toUpdate } = updateTaskDto;
-    let assignedTo: User;
-    let stage: Stage;    
+  // async update(id: string, updateTaskDto: UpdateTaskDto) {
+  //   const { stageId, assignedToId, ...toUpdate } = updateTaskDto;
+  //   let assignedTo: User;
+  //   let stage: Stage;    
 
-    if (stageId){
-      stage = await this.stageService.findOne(stageId);
-    }
+  //   if (stageId){
+  //     stage = await this.stageService.findOne(stageId);
+  //   }
 
-    if (assignedToId){
-      assignedTo = await this.userRepository.findOneBy({id: assignedToId});
-      if (!assignedTo){
-        throw new NotFoundException(`User with id ${assignedToId} not found`);
-      }
-    }
+  //   if (assignedToId){
+  //     assignedTo = await this.userRepository.findOneBy({id: assignedToId});
+  //     if (!assignedTo){
+  //       throw new NotFoundException(`User with id ${assignedToId} not found`);
+  //     }
+  //   }
 
-    const task = await this.taskRepository.preload({id: id, stage: stage, assignedTo: assignedTo, ...toUpdate})
-    if (!task){
-      throw new NotFoundException(`Task with id ${id} not found`);
-    }
+  //   const task = await this.taskRepository.preload({id: id, stage: stage, assignedTo: assignedTo, ...toUpdate})
+  //   if (!task){
+  //     throw new NotFoundException(`Task with id ${id} not found`);
+  //   }
 
-    try {
-      const newTask = await this.taskRepository.save(task);
-      return newTask;
-    } catch (error) {
-      this.handleDBExceptions(error);
-    }
+  //   try {
+  //     const newTask = await this.taskRepository.save(task);
+  //     return newTask;
+  //   } catch (error) {
+  //     this.handleDBExceptions(error);
+  //   }
 
-  }
+  // }
 
   async remove(id: string) {
     const task = await this.findOne(id);

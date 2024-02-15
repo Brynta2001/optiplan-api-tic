@@ -1,49 +1,44 @@
-import { Column, Entity, JoinTable, ManyToOne, OneToMany, PrimaryGeneratedColumn, TableInheritance, Tree, TreeChildren, TreeParent } from "typeorm";
-import { Stage } from "../../stages/entities/stage.entity";
-import { User } from "../../auth/entities/user.entity";
+import { Entity, ManyToOne, OneToMany, Tree, TreeChildren, TreeParent } from "typeorm";
+import { Content } from "../../common/entities/content.entity";
+import { Account } from "../../auth/entities/account.entity";
+import { State } from "../../states/entities/state.entity";
+import { Project } from "../../projects/entities/project.entity";
 
 @Entity()
 @Tree("closure-table")
-export class Task {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+export class Task extends Content {
 
-    @Column('text')
-    title: string;
+    @ManyToOne(
+        () => Project,
+        project => project.tasks,
+        {}
+    )
+    project: Project;
 
-    @Column('text', {
-        nullable: true
-    })
-    description?: string;
+    @ManyToOne(
+        () => State,
+        state => state.tasks,
+        { eager: true }
+    )
+    state: State;
 
-    // It allows to search when a user enter using different roles
-    @Column('int')
-    level: number;
+    @ManyToOne(
+        () => Account,
+        account => account.createdTasks,
+        { eager: true }
+    )
+    createdBy: Account;
 
-    /*@ManyToOne(
-        () => UserRole,
-        (userRole) => userRole.createdTask,
-        {eager: true}
-    )*/
-    createdBy: User;
-
-    /*@ManyToOne(
-        () => UserRole,
-        (userRole) => userRole.assignedTask,
-        {eager: true, nullable: true}
-    )*/
-    assignedTo: User;
+    @ManyToOne(
+        () => Account,
+        account => account.assignedTasks,
+        { eager: true }
+    )
+    assignedTo: Account;
 
     @TreeParent()
-    parentTask: Task;
+    parentTask?: Task;
 
     @TreeChildren()
-    subTasks: Task[];
-    
-    @ManyToOne(
-        () => Stage,
-        (stage) => stage.task,
-        {onDelete: 'CASCADE', eager: true, nullable: true}
-    )
-    stage?: Stage;
+    subTasks?: Task[];
 }
