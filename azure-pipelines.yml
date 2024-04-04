@@ -111,7 +111,7 @@ stages:
               DB_USERNAME: $(ELP_USERNAME)
               STAGE: $(STAGE)
               JWT_SECRET: $(JWT_SECRET)
-              PORT: $(PORT)
+              
 
             inputs:
               azureSubscription: $(azureSubscription)
