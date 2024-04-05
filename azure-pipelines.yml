@@ -39,6 +39,14 @@ stages:
         yarn install
         yarn build
       displayName: 'yarn install and build'
+      env:
+        DB_HOST: $(ELP_HOST)
+        DB_NAME: $(ELP_NAME)
+        DB_PASSWORD: $(ELP_PASSWORD)
+        DB_PORT: $(ELP_PORT)
+        DB_USERNAME: $(ELP_USERNAME)
+        STAGE: $(STAGE)
+        JWT_SECRET: $(JWT_SECRET)
 
     - task: CopyFiles@2
       displayName: 'Copy package*.json to dist folder'
