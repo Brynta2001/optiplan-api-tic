@@ -1,5 +1,11 @@
-import { Equal, Repository } from 'typeorm';
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -8,7 +14,6 @@ import { Project } from './entities/project.entity';
 
 @Injectable()
 export class ProjectsService {
-
   private readonly logger = new Logger(ProjectsService.name);
 
   constructor(
@@ -31,7 +36,7 @@ export class ProjectsService {
   async findAll(account: Account) {
     try {
       return await this.projectRepository.find({
-        where: { createdBy: {id: account.id} },
+        where: { createdBy: { id: account.id } },
       });
     } catch (error) {
       this.handleDBExceptions(error);
@@ -39,7 +44,7 @@ export class ProjectsService {
   }
 
   async findOne(id: string) {
-    const project = await this.projectRepository.findOneBy({id});
+    const project = await this.projectRepository.findOneBy({ id });
     if (!project) {
       throw new NotFoundException(`Project with id ${id} not found`);
     }
@@ -47,7 +52,10 @@ export class ProjectsService {
   }
 
   async update(id: string, updateProjectDto: UpdateProjectDto) {
-    const project = await this.projectRepository.preload({id, ...updateProjectDto});
+    const project = await this.projectRepository.preload({
+      id,
+      ...updateProjectDto,
+    });
     if (!project) {
       throw new NotFoundException(`Project with id ${id} not found`);
     }
@@ -68,11 +76,13 @@ export class ProjectsService {
     return project.states;
   }
 
-  private handleDBExceptions(error:any){
+  private handleDBExceptions(error: any) {
     if (error.code === '23505') {
       throw new BadRequestException(error.detail);
     }
-    this.logger.error(error)
-    throw new InternalServerErrorException('Unexpected error, check server logs')
+    this.logger.error(error);
+    throw new InternalServerErrorException(
+      'Unexpected error, check server logs',
+    );
   }
 }
