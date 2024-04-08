@@ -14,5 +14,4 @@ export class SeedController {
   createRoles() {
     return this.seedService.createRoles();
   }
-
 }
