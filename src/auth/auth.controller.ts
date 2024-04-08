@@ -6,7 +6,6 @@ import { Auth, GetAccount } from './decorators';
 import { ValidRoles } from './interfaces/roles.interface';
 import { Account } from './entities/account.entity';
 
-
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -23,7 +22,11 @@ export class AuthController {
   }
 
   @Get('lower-role-users')
-  @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader)
+  @Auth(
+    ValidRoles.businessManager,
+    ValidRoles.areaManager,
+    ValidRoles.areaLeader,
+  )
   getUsersByRole(@GetAccount() account: Account) {
     return this.authService.getUsersWithLowerRole(account.role);
   }
