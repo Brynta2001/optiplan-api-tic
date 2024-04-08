@@ -1,5 +1,11 @@
-import { Equal, Repository } from 'typeorm';
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -12,9 +18,8 @@ import { Project } from '../projects/entities/project.entity';
 
 @Injectable()
 export class TasksService {
+  private readonly logger = new Logger(TasksService.name);
 
-  private readonly logger = new Logger(TasksService.name)
-  
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
@@ -22,31 +27,34 @@ export class TasksService {
     private readonly accountRepository: Repository<Account>,
     private readonly projectService: ProjectsService,
     private readonly stateService: StatesService,
-  ){}
+  ) {}
 
   async create(createTaskDto: CreateTaskDto, account: Account) {
-    const { projectId, stateId, assignedToId, parentTaskId, ...taskDetails } = createTaskDto;
-    
+    const { projectId, stateId, assignedToId, parentTaskId, ...taskDetails } =
+      createTaskDto;
+
     let state: State;
     let assignedTo: Account;
     let parentTask: Task;
 
     const project = await this.projectService.findOne(projectId);
 
-    if (stateId){
+    if (stateId) {
       state = await this.stateService.findOne(stateId);
     }
-    
-    if (assignedToId){
-      assignedTo = await this.accountRepository.findOneBy({id: assignedToId});
-      if (!assignedTo){
-        throw new NotFoundException(`Account with id ${assignedToId} not found`);
+
+    if (assignedToId) {
+      assignedTo = await this.accountRepository.findOneBy({ id: assignedToId });
+      if (!assignedTo) {
+        throw new NotFoundException(
+          `Account with id ${assignedToId} not found`,
+        );
       }
     }
 
-    if (parentTaskId){
+    if (parentTaskId) {
       parentTask = await this.findOne(parentTaskId);
-    }   
+    }
 
     try {
       const task = this.taskRepository.create({
@@ -69,46 +77,49 @@ export class TasksService {
   }
 
   async findOne(id: string) {
-    const task = await this.taskRepository.findOneBy({id});
-    if (!task){
+    const task = await this.taskRepository.findOneBy({ id });
+    if (!task) {
       throw new NotFoundException(`Task with id ${id} not found`);
     }
     return task;
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto) {
-    const { projectId, stateId, assignedToId, parentTaskId, ...taskDetails } = updateTaskDto;
+    const { projectId, stateId, assignedToId, parentTaskId, ...taskDetails } =
+      updateTaskDto;
 
     let project: Project;
     let state: State;
     let assignedTo: Account;
     let parentTask: Task;
 
-    if (projectId){
+    if (projectId) {
       project = await this.projectService.findOne(projectId);
     }
 
-    if (stateId){
+    if (stateId) {
       state = await this.stateService.findOne(stateId);
     }
 
-    if (assignedToId){
-      assignedTo = await this.accountRepository.findOneBy({id: assignedToId});
-      if (!assignedTo){
-        throw new NotFoundException(`Account with id ${assignedToId} not found`);
+    if (assignedToId) {
+      assignedTo = await this.accountRepository.findOneBy({ id: assignedToId });
+      if (!assignedTo) {
+        throw new NotFoundException(
+          `Account with id ${assignedToId} not found`,
+        );
       }
     }
 
     const task = await this.taskRepository.preload({
-      id: id, 
+      id: id,
       ...taskDetails,
       project,
       state,
       assignedTo,
       parentTask,
     });
-    
-    if (!task){
+
+    if (!task) {
       throw new NotFoundException(`Task with id ${id} not found`);
     }
 
@@ -126,12 +137,12 @@ export class TasksService {
 
   async findSubtasks(id: string) {
     // const task = await this.taskRepository.manager.getTreeRepository(Task).findDescendants(await this.findOne(id));
-    const parentTask = await this.findOne(id)
+    const parentTask = await this.findOne(id);
     const task = await this.taskRepository.manager
       .getTreeRepository(Task)
       .findDescendantsTree(parentTask, {
-        depth: 1, 
-        relations: []
+        depth: 1,
+        relations: [],
       });
     return task;
   }
@@ -140,15 +151,35 @@ export class TasksService {
   async findByUser(account: Account) {
     const tasks = await this.taskRepository.find({
       where: [
-        {assignedTo: {id: account.id}},
-        {createdBy: {id: account.id}},
+        { assignedTo: { id: account.id } },
+        { createdBy: { id: account.id } },
       ],
-      relations: ['assignedTo', 'createdBy', 'state']
-    })
-    return tasks;
+      relations: ['assignedTo', 'createdBy', 'state', 'project'],
+    });
+    return tasks.map((task) => {
+      return {
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        state: task.state,
+        project: task.project.title,
+        createdBy: {
+          id: task.createdBy.id,
+          name: task.createdBy.user.fullName,
+          role: task.createdBy.role.name,
+        },
+        assignedTo: task.assignedTo
+          ? {
+              id: task.assignedTo.id,
+              name: task.assignedTo.user.fullName,
+              role: task.assignedTo.role.name,
+            }
+          : null,
+      };
+    });
   }
 
-  async findSubtasksByUser(account: Account) {
+  /*async findSubtasksByUser(account: Account) {
     const parentTasks = await this.findByUser(account);
 
     parentTasks.forEach(async (task) => {
@@ -162,13 +193,15 @@ export class TasksService {
     });
 
     return parentTasks;
-  }
+  }*/
 
-  private handleDBExceptions(error:any){
+  private handleDBExceptions(error: any) {
     if (error.code === '23505') {
       throw new BadRequestException(error.detail);
     }
-    this.logger.error(error)
-    throw new InternalServerErrorException('Unexpected error, check server logs')
+    this.logger.error(error);
+    throw new InternalServerErrorException(
+      'Unexpected error, check server logs',
+    );
   }
 }

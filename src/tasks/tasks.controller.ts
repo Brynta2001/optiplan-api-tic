@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -11,16 +20,23 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
-  @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader, ValidRoles.technician)
-  create(
-    @Body() createTaskDto: CreateTaskDto, 
-    @GetAccount() account: Account,
-  ) {
+  @Auth(
+    ValidRoles.businessManager,
+    ValidRoles.areaManager,
+    ValidRoles.areaLeader,
+    ValidRoles.technician,
+  )
+  create(@Body() createTaskDto: CreateTaskDto, @GetAccount() account: Account) {
     return this.tasksService.create(createTaskDto, account);
   }
 
   @Get()
-  @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader, ValidRoles.technician)
+  @Auth(
+    ValidRoles.businessManager,
+    ValidRoles.areaManager,
+    ValidRoles.areaLeader,
+    ValidRoles.technician,
+  )
   findAll(@GetAccount() account: Account) {
     return this.tasksService.findByUser(account);
   }
@@ -31,10 +47,15 @@ export class TasksController {
   }
 
   @Patch(':id')
-  @Auth(ValidRoles.businessManager, ValidRoles.areaManager, ValidRoles.areaLeader, ValidRoles.technician)
+  @Auth(
+    ValidRoles.businessManager,
+    ValidRoles.areaManager,
+    ValidRoles.areaLeader,
+    ValidRoles.technician,
+  )
   update(
-    @Param('id', ParseUUIDPipe) id: string, 
-    @Body() updateTaskDto: UpdateTaskDto
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateTaskDto: UpdateTaskDto,
   ) {
     return this.tasksService.update(id, updateTaskDto);
   }

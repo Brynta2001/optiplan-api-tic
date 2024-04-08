@@ -8,7 +8,13 @@ import { StagesService } from '../stages/stages.service';
 import { Board } from '../boards/entities/board.entity';
 import { BoardsService } from '../boards/boards.service';
 import { User } from '../auth/entities/user.entity';
-import { mockCreateTaskDto, mockTasks, mockUpdateTaskDto, mockStages, mockUser } from '../../test/utils';
+import {
+  mockCreateTaskDto,
+  mockTasks,
+  mockUpdateTaskDto,
+  mockStages,
+  mockUser,
+} from '../../test/utils';
 
 describe('TasksService', () => {
   let service: TasksService;
@@ -75,7 +81,10 @@ describe('TasksService', () => {
     jest.spyOn(stageRepository, 'findOneBy').mockReturnValue(null);
 
     try {
-      await service.update('885fb911-7eca-4106-b2f6-d3640bdac6bb', mockUpdateTaskDto);
+      await service.update(
+        '885fb911-7eca-4106-b2f6-d3640bdac6bb',
+        mockUpdateTaskDto,
+      );
     } catch (error) {
       expect(error.message).toEqual(
         'Stage (column) with id 885fb911-7eca-4106-b2f6-d3640bdac6bb not found',
@@ -84,14 +93,20 @@ describe('TasksService', () => {
   });
 
   it('should not update a task if it does not exist', async () => {
-    jest.spyOn(stageRepository, 'findOneBy').mockReturnValue(Promise.resolve(mockStages[0]));
-    jest.spyOn(userRepository, 'findOneBy').mockReturnValue(Promise.resolve(mockUser));
+    jest
+      .spyOn(stageRepository, 'findOneBy')
+      .mockReturnValue(Promise.resolve(mockStages[0]));
+    jest
+      .spyOn(userRepository, 'findOneBy')
+      .mockReturnValue(Promise.resolve(mockUser));
     jest.spyOn(taskRepository, 'preload').mockReturnValue(null);
 
     try {
       await service.update(mockTasks[0].id, mockUpdateTaskDto);
     } catch (error) {
-      expect(error.message).toEqual('Task with id e7c6b0b2-3f2a-4f5e-9a5a-3f4c1b7e7e7c not found');
+      expect(error.message).toEqual(
+        'Task with id e7c6b0b2-3f2a-4f5e-9a5a-3f4c1b7e7e7c not found',
+      );
     }
   });
 
@@ -101,7 +116,9 @@ describe('TasksService', () => {
     try {
       await service.remove(mockTasks[0].id);
     } catch (error) {
-      expect(error.message).toEqual('Task with id e7c6b0b2-3f2a-4f5e-9a5a-3f4c1b7e7e7c not found');
+      expect(error.message).toEqual(
+        'Task with id e7c6b0b2-3f2a-4f5e-9a5a-3f4c1b7e7e7c not found',
+      );
     }
   });
 });
