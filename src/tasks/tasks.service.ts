@@ -101,6 +101,10 @@ export class TasksService {
       state = await this.stateService.findOne(stateId);
     }
 
+    if (parentTaskId) {
+      parentTask = await this.findOne(parentTaskId);
+    }
+
     if (assignedToId) {
       assignedTo = await this.accountRepository.findOneBy({ id: assignedToId });
       if (!assignedTo) {
