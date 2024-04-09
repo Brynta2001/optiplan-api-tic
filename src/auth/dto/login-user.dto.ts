@@ -2,9 +2,8 @@ import {
   IsEmail,
   IsIn,
   IsString,
-  Matches,
+  IsStrongPassword,
   MaxLength,
-  MinLength,
 } from 'class-validator';
 
 export class LoginAccountDto {
@@ -12,11 +11,13 @@ export class LoginAccountDto {
   email: string;
 
   @IsString()
-  @MinLength(6)
   @MaxLength(50)
-  @Matches(/(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message:
-      'The password must have an Uppercase, lowercase letter and a number',
+  @IsStrongPassword({
+    minLength: 6,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1,
   })
   password: string;
 
