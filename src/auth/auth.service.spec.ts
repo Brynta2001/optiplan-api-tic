@@ -8,7 +8,6 @@ import { Role } from './entities/role.entity';
 import {
   mockAccountRepository,
   mockRoleRepository,
-  mockRoles,
   mockUserRepository,
 } from '../../test/utils';
 
@@ -46,7 +45,7 @@ describe('AuthService', () => {
     expect(authService).toBeDefined();
   });
 
-  it('should not create a user with an invalid role', () => {
+  it('should not create a user with an invalid role', async () => {
     const accountDto = {
       email: 'bryan.tapia03@epn.edu.ec',
       password: 'Bryan1234',
@@ -55,11 +54,14 @@ describe('AuthService', () => {
       department: 'IT',
     };
 
-    jest.spyOn(mockRoleRepository, 'find').mockReturnValue(mockRoles);
+    jest.spyOn(mockRoleRepository, 'find').mockReturnValue([]);
 
-    const account = authService.create(accountDto);
-    expect(account).toBeDefined();
-    // expect(account).rejects.toThrow('Hola');
+    try {
+      await authService.create(accountDto);
+    } catch (error) {
+      expect(error.message).toEqual('Roles are not valid');
+      expect(error.status).toEqual(400);
+    }
   });
 
   //   it('should not login if credentials are invalid', async () => {

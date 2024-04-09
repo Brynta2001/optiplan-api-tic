@@ -29,11 +29,15 @@ export class AuthService {
   ) {}
 
   async create(createAccountDto: CreateAccountDto) {
+    const { password, roles, ...userData } = createAccountDto;
+    const userRoles = await this.getRolesByName(roles);
+
+    // Verify if userRoles is empty
+    if (userRoles.length == 0) {
+      throw new BadRequestException('Roles are not valid');
+    }
+
     try {
-      const { password, roles, ...userData } = createAccountDto;
-
-      const userRoles = await this.getRolesByName(roles);
-
       // User creation
       const user = this.userRepository.create({
         ...userData,
@@ -138,7 +142,6 @@ export class AuthService {
     if (error.code === '23505') {
       throw new BadRequestException(error.detail);
     }
-    console.log(error);
     throw new InternalServerErrorException('Please check server logs');
   }
 }
