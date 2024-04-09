@@ -14,9 +14,8 @@ import { CommonModule } from './common/common.module';
     TypeOrmModule.forRoot({
       ssl: process.env.STAGE === 'prod' ? true : false,
       extra: {
-        ssl: process.env.STAGE === 'prod'
-          ? { rejectUnauthorized: false}
-          : null,
+        ssl:
+          process.env.STAGE === 'prod' ? { rejectUnauthorized: false } : null,
       },
       type: 'postgres',
       host: process.env.DB_HOST,
