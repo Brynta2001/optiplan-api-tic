@@ -3,19 +3,19 @@ export const mockRoleRepository = {
 };
 
 export const mockRole = {
-  id: 'e7c6b0b2-3f2a-4f5e-9a5a-3f4c1b7e7e7c',
+  id: 2,
   name: 'area_manager',
 };
 
 export const mockRoles = [
   {
-    id: 'e7c6b0b2-3f2a-4f5e-9a5a-3f4c1b7e7e7c',
-    name: 'area_manager',
-    level: 2,
+    id: 1,
+    name: 'business_manager',
+    level: 1,
   },
   {
-    id: 'e7c6b0b2-3f2a-4f5e-9a5a-3f4c1b7e7e7c',
-    name: 'business_manager',
-    level: 3,
+    id: 2,
+    name: 'area_manager',
+    level: 2,
   },
 ];
