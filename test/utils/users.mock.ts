@@ -1,21 +1,19 @@
 import { faker } from '@faker-js/faker';
+import { User } from 'src/auth/entities/user.entity';
+import { mockAccount } from './accounts.mock';
 
 export const mockUserRepository = {
   create: jest.fn(),
   save: jest.fn(),
 };
 
-export const mockUser = {
+export const mockUser: User = {
   id: faker.string.uuid(),
-  fullName: 'John Doe',
-  email: 'bryan.tapia03@epn.edu.ec',
-  password: '$2b$10$7ZHhHiXx',
-  roles: ['area_manager'],
+  fullName: faker.person.fullName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
   department: 'IT',
-  checkFieldsBeforeInsert() {
-    this.email = this.email.toLowerCase().trim();
-  },
-  checkFieldsBeforeUpdate() {
-    this.checkFieldsBeforeInsert();
-  },
+  account: mockAccount,
+  checkFieldsBeforeInsert: jest.fn(),
+  checkFieldsBeforeUpdate: jest.fn(),
 };

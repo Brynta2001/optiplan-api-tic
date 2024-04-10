@@ -7,6 +7,7 @@ import { Account } from './entities/account.entity';
 import { Role } from './entities/role.entity';
 import {
   mockAccountRepository,
+  mockAccounts,
   mockRole,
   mockRoleRepository,
   mockUserRepository,
@@ -46,6 +47,21 @@ describe('AuthService', () => {
     expect(authService).toBeDefined();
   });
 
+  it('TEST-2 should return users with lower roles', async () => {
+    jest.spyOn(mockRoleRepository, 'findOne').mockReturnValue(mockRole);
+    jest.spyOn(mockAccountRepository, 'find').mockReturnValue(mockAccounts);
+
+    const users = await authService.getUsersWithLowerRole(mockRole);
+
+    expect(mockAccountRepository.find).toHaveBeenCalled();
+    expect(mockRoleRepository.findOne).toHaveBeenCalled();
+    expect(mockRoleRepository.findOne).toHaveBeenCalledWith({
+      where: { level: mockRole.level + 1 },
+    });
+    expect(users).toHaveLength(2);
+    expect(users).toEqual([mockAccounts[0].user, mockAccounts[1].user]);
+  });
+
   it('TEST-3 should not create a user with an invalid role', async () => {
     const accountDto = {
       email: 'bryan.tapia03@epn.edu.ec',
@@ -64,23 +80,4 @@ describe('AuthService', () => {
       expect(error.status).toEqual(400);
     }
   });
-
-  it('TEST-2 should return users with lower roles', async () => {
-    const users = await authService.getUsersWithLowerRole(mockRole);
-    expect(users).toBeDefined();
-  });
-
-  //   it('should not login if credentials are invalid', async () => {
-  //     const user = {
-  //       email: 'bryan.tapia03@epn.edu.ec',
-  //       password: 'Bryan',
-  //       role: 'area_manager',
-  //     };
-  //     try {
-  //       await authService.login(user);
-  //     } catch (error) {
-  //       expect(error.status.code).toEqual(401);
-  //       expect(error.message).toEqual('Credentials are not valid');
-  //     }
-  //   });
 });
