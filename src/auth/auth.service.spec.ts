@@ -7,8 +7,8 @@ import { Account } from './entities/account.entity';
 import { Role } from './entities/role.entity';
 import {
   mockAccountRepository,
+  mockRoles,
   mockAccounts,
-  mockRole,
   mockRoleRepository,
   mockUserRepository,
 } from '../../test/utils';
@@ -48,15 +48,15 @@ describe('AuthService', () => {
   });
 
   it('TEST-2 should return users with lower roles', async () => {
-    jest.spyOn(mockRoleRepository, 'findOne').mockReturnValue(mockRole);
+    jest.spyOn(mockRoleRepository, 'findOne').mockReturnValue(mockRoles[0]);
     jest.spyOn(mockAccountRepository, 'find').mockReturnValue(mockAccounts);
 
-    const users = await authService.getUsersWithLowerRole(mockRole);
+    const users = await authService.getUsersWithLowerRole(mockRoles[0]);
 
     expect(mockAccountRepository.find).toHaveBeenCalled();
     expect(mockRoleRepository.findOne).toHaveBeenCalled();
     expect(mockRoleRepository.findOne).toHaveBeenCalledWith({
-      where: { level: mockRole.level + 1 },
+      where: { level: mockRoles[0].level + 1 },
     });
     expect(users).toHaveLength(2);
     expect(users).toEqual([mockAccounts[0].user, mockAccounts[1].user]);
