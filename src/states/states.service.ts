@@ -19,12 +19,12 @@ export class StatesService {
   constructor(
     @InjectRepository(State)
     private readonly stateRepository: Repository<State>,
-    private readonly projectService: ProjectsService,
+    private readonly projectsService: ProjectsService,
   ) {}
   async create(createStateDto: CreateStateDto) {
     console.log(createStateDto);
     const { projectId, ...stateDetails } = createStateDto;
-    const project = await this.projectService.findOne(projectId);
+    const project = await this.projectsService.findOne(projectId);
 
     try {
       const state = this.stateRepository.create({

@@ -25,8 +25,8 @@ export class TasksService {
     private readonly taskRepository: Repository<Task>,
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
-    private readonly projectService: ProjectsService,
-    private readonly stateService: StatesService,
+    private readonly projectsService: ProjectsService,
+    private readonly statesService: StatesService,
   ) {}
 
   async create(createTaskDto: CreateTaskDto, account: Account) {
@@ -37,10 +37,10 @@ export class TasksService {
     let assignedTo: Account;
     let parentTask: Task;
 
-    const project = await this.projectService.findOne(projectId);
+    const project = await this.projectsService.findOne(projectId);
 
     if (stateId) {
-      state = await this.stateService.findOne(stateId);
+      state = await this.statesService.findOne(stateId);
     }
 
     if (assignedToId) {
@@ -94,11 +94,11 @@ export class TasksService {
     let parentTask: Task;
 
     if (projectId) {
-      project = await this.projectService.findOne(projectId);
+      project = await this.projectsService.findOne(projectId);
     }
 
     if (stateId) {
-      state = await this.stateService.findOne(stateId);
+      state = await this.statesService.findOne(stateId);
     }
 
     if (parentTaskId) {

@@ -14,7 +14,7 @@ export class SeedService {
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
     @InjectRepository(Role)
-    private readonly roleRepository: Repository<Role>,
+    private readonly rolesRepository: Repository<Role>,
   ) {}
 
   async createUsers() {
@@ -52,13 +52,13 @@ export class SeedService {
   async createRoles() {
     const seedRoles = initialData.roles;
     const roles = seedRoles.map((role) => {
-      return this.roleRepository.create(role);
+      return this.rolesRepository.create(role);
     });
 
-    return await this.roleRepository.save(roles);
+    return await this.rolesRepository.save(roles);
   }
 
   private async getRolesByName(roles: string[]) {
-    return await this.roleRepository.find({ where: { name: In(roles) } });
+    return await this.rolesRepository.find({ where: { name: In(roles) } });
   }
 }
