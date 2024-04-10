@@ -56,8 +56,9 @@ export class TasksController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTaskDto: UpdateTaskDto,
+    @GetAccount() account: Account,
   ) {
-    return this.tasksService.update(id, updateTaskDto);
+    return this.tasksService.update(id, updateTaskDto, account);
   }
 
   @Delete(':id')

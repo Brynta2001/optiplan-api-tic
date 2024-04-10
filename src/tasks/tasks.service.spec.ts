@@ -59,70 +59,23 @@ describe('TasksService', () => {
 
   it('TEST-4 should not assign a task to a user with a greater role', async () => {
     const updateTaskDto: UpdateTaskDto = {
-      assignedToId: mockAccounts[0].id,
+      assignedToId: mockAccounts[1].id,
     };
+    jest
+      .spyOn(mockAccountRepository, 'findOneBy')
+      .mockReturnValue(mockAccounts[1]);
 
-    const updatedTask = await tasksService.update(
-      mockTasks[0].id,
-      updateTaskDto,
-    );
-    expect(updatedTask.assignedTo).toEqual(mockAccounts[0]);
+    try {
+      await tasksService.update(
+        mockTasks[0].id,
+        updateTaskDto,
+        mockAccounts[0],
+      );
+    } catch (error) {
+      expect(error.message).toBe(
+        'You cannot assign a task to a user with a greater role',
+      );
+      expect(error.status).toBe(400);
+    }
   });
-
-  //   it('should not create a new task if stage does not exist', async () => {
-  //     jest.spyOn(stageRepository, 'findOneBy').mockReturnValue(null);
-
-  //     try {
-  //       await taskService.create(mockCreateTaskDto);
-  //     } catch (error) {
-  //       expect(error.message).toEqual(
-  //         'Stage (column) with id 885fb911-7eca-4106-b2f6-d3640bdac6bb not found',
-  //       );
-  //     }
-  //   });
-
-  //   it('should not update a task if stage does not exist', async () => {
-  //     jest.spyOn(stageRepository, 'findOneBy').mockReturnValue(null);
-
-  //     try {
-  //       await taskService.update(
-  //         '885fb911-7eca-4106-b2f6-d3640bdac6bb',
-  //         mockUpdateTaskDto,
-  //       );
-  //     } catch (error) {
-  //       expect(error.message).toEqual(
-  //         'Stage (column) with id 885fb911-7eca-4106-b2f6-d3640bdac6bb not found',
-  //       );
-  //     }
-  //   });
-
-  //   it('should not update a task if it does not exist', async () => {
-  //     jest
-  //       .spyOn(stageRepository, 'findOneBy')
-  //       .mockReturnValue(Promise.resolve(mockStages[0]));
-  //     jest
-  //       .spyOn(userRepository, 'findOneBy')
-  //       .mockReturnValue(Promise.resolve(mockUser));
-  //     jest.spyOn(taskRepository, 'preload').mockReturnValue(null);
-
-  //     try {
-  //       await taskService.update(mockTasks[0].id, mockUpdateTaskDto);
-  //     } catch (error) {
-  //       expect(error.message).toEqual(
-  //         'Task with id e7c6b0b2-3f2a-4f5e-9a5a-3f4c1b7e7e7c not found',
-  //       );
-  //     }
-  //   });
-
-  //   it('should not delete a task if it does not exist', async () => {
-  //     jest.spyOn(taskRepository, 'findOneBy').mockReturnValue(null);
-
-  //     try {
-  //       await taskService.remove(mockTasks[0].id);
-  //     } catch (error) {
-  //       expect(error.message).toEqual(
-  //         'Task with id e7c6b0b2-3f2a-4f5e-9a5a-3f4c1b7e7e7c not found',
-  //       );
-  //     }
-  //   });
 });

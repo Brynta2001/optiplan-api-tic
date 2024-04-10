@@ -84,7 +84,7 @@ export class TasksService {
     return task;
   }
 
-  async update(id: string, updateTaskDto: UpdateTaskDto) {
+  async update(id: string, updateTaskDto: UpdateTaskDto, account: Account) {
     const { projectId, stateId, assignedToId, parentTaskId, ...taskDetails } =
       updateTaskDto;
 
@@ -110,6 +110,11 @@ export class TasksService {
       if (!assignedTo) {
         throw new NotFoundException(
           `Account with id ${assignedToId} not found`,
+        );
+      }
+      if (assignedTo.role.level >= account.role.level) {
+        throw new BadRequestException(
+          'You cannot assign a task to a user with a greater role',
         );
       }
     }
