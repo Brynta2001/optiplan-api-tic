@@ -5,16 +5,8 @@ import { mockRoles } from './roles.mock';
 
 export const mockAccountRepository = {
   find: jest.fn(),
+  findOneBy: jest.fn(),
 };
-
-// export const mockAccount: Account = {
-//   id: faker.string.uuid(),
-//   user: mockUser,
-//   role: mockRole,
-//   projects: [],
-//   createdTasks: [],
-//   assignedTasks: [],
-// };
 
 export const mockAccounts: Account[] = [
   {

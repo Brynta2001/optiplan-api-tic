@@ -1,31 +1,60 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TasksService } from './tasks.service';
+import { ProjectsService } from '../projects/projects.service';
+import { StatesService } from '../states/states.service';
 import { Task } from './entities/task.entity';
-import { mockAccounts, mockTaskRepository, mockTasks } from 'test/utils';
+import { Account } from '../auth/entities/account.entity';
+import { Project } from '../projects/entities/project.entity';
+import { State } from '../states/entities/state.entity';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import {
+  mockAccountRepository,
+  mockAccounts,
+  mockProjectRepository,
+  mockTaskRepository,
+  mockTasks,
+  mockStateRepository,
+} from '../../test/utils';
 
 describe('TasksService', () => {
-  let taskService: TasksService;
+  let tasksService: TasksService;
 
   const taskRepositoryToken = getRepositoryToken(Task);
+  const accountRepositoryToken = getRepositoryToken(Account);
+  const projectRepositoryToken = getRepositoryToken(Project);
+  const stateRepositoryToken = getRepositoryToken(State);
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TasksService,
+        ProjectsService,
+        StatesService,
         {
           provide: taskRepositoryToken,
           useValue: mockTaskRepository,
         },
+        {
+          provide: accountRepositoryToken,
+          useValue: mockAccountRepository,
+        },
+        {
+          provide: projectRepositoryToken,
+          useValue: mockProjectRepository,
+        },
+        {
+          provide: stateRepositoryToken,
+          useValue: mockStateRepository,
+        },
       ],
     }).compile();
 
-    taskService = module.get<TasksService>(TasksService);
+    tasksService = module.get<TasksService>(TasksService);
   });
 
   it('should be defined', () => {
-    expect(taskService).toBeDefined();
+    expect(tasksService).toBeDefined();
   });
 
   it('TEST-4 should not assign a task to a user with a greater role', async () => {
@@ -33,7 +62,7 @@ describe('TasksService', () => {
       assignedToId: mockAccounts[0].id,
     };
 
-    const updatedTask = await taskService.update(
+    const updatedTask = await tasksService.update(
       mockTasks[0].id,
       updateTaskDto,
     );
