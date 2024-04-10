@@ -7,6 +7,7 @@ import { Account } from './entities/account.entity';
 import { Role } from './entities/role.entity';
 import {
   mockAccountRepository,
+  mockRole,
   mockRoleRepository,
   mockUserRepository,
 } from '../../test/utils';
@@ -18,7 +19,7 @@ describe('AuthService', () => {
   const userRepositoryToken = getRepositoryToken(User);
   const roleRepositoryToken = getRepositoryToken(Role);
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         JwtService,
@@ -45,7 +46,7 @@ describe('AuthService', () => {
     expect(authService).toBeDefined();
   });
 
-  it('should not create a user with an invalid role', async () => {
+  it('TEST-3 should not create a user with an invalid role', async () => {
     const accountDto = {
       email: 'bryan.tapia03@epn.edu.ec',
       password: 'Bryan1234',
@@ -62,6 +63,11 @@ describe('AuthService', () => {
       expect(error.message).toEqual('Roles are not valid');
       expect(error.status).toEqual(400);
     }
+  });
+
+  it('TEST-2 should return users with lower roles', async () => {
+    const users = await authService.getUsersWithLowerRole(mockRole);
+    expect(users).toBeDefined();
   });
 
   //   it('should not login if credentials are invalid', async () => {
