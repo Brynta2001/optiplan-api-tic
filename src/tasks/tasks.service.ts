@@ -171,7 +171,10 @@ export class TasksService {
         title: task.title,
         description: task.description,
         state: task.state,
-        project: task.project.title,
+        project: {
+          id: task.project.id,
+          title: task.project.title,
+        },
         createdBy: {
           id: task.createdBy.id,
           name: task.createdBy.user.fullName,
