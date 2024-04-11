@@ -16,6 +16,8 @@ import {
   mockTasks,
   mockStateRepository,
   mockAssignedTask,
+  mockStates,
+  mockStartedTask,
 } from '../../test/utils';
 
 describe('TasksService', () => {
@@ -98,5 +100,26 @@ describe('TasksService', () => {
     );
 
     expect(assignedTask.assignedTo).toEqual(mockAccounts[1]);
+  });
+
+  it('TEST-7 should update the task state after starting the flow', async () => {
+    const updateTaskDto: UpdateTaskDto = {
+      stateId: mockStates[0].id,
+    };
+
+    jest
+      .spyOn(mockAccountRepository, 'findOneBy')
+      .mockReturnValue(mockAccounts[1]);
+    jest.spyOn(mockStateRepository, 'findOneBy').mockReturnValue(mockStates[0]);
+    jest.spyOn(mockTaskRepository, 'preload').mockReturnValue(mockStartedTask);
+    jest.spyOn(mockTaskRepository, 'save').mockReturnValue(mockStartedTask);
+
+    const startedTask = await tasksService.update(
+      mockTasks[0].id,
+      updateTaskDto,
+      mockAccounts[0],
+    );
+
+    expect(startedTask.state).toEqual(mockStates[0]);
   });
 });
