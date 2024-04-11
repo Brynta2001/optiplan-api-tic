@@ -11,8 +11,8 @@ import {
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { Auth, GetAccount } from 'src/auth/decorators';
-import { Account } from 'src/auth/entities/account.entity';
+import { Account } from '../auth/entities/account.entity';
+import { Auth, GetAccount } from '../auth/decorators';
 
 @Controller('projects')
 export class ProjectsController {
