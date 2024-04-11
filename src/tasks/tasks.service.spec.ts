@@ -15,6 +15,7 @@ import {
   mockTaskRepository,
   mockTasks,
   mockStateRepository,
+  mockAssignedTask,
 } from '../../test/utils';
 
 describe('TasksService', () => {
@@ -59,17 +60,17 @@ describe('TasksService', () => {
 
   it('TEST-4 should not assign a task to a user with a greater role', async () => {
     const updateTaskDto: UpdateTaskDto = {
-      assignedToId: mockAccounts[1].id,
+      assignedToId: mockAccounts[0].id,
     };
     jest
       .spyOn(mockAccountRepository, 'findOneBy')
-      .mockReturnValue(mockAccounts[1]);
+      .mockReturnValue(mockAccounts[0]);
 
     try {
       await tasksService.update(
         mockTasks[0].id,
         updateTaskDto,
-        mockAccounts[0],
+        mockAccounts[1],
       );
     } catch (error) {
       expect(error.message).toBe(
@@ -77,5 +78,25 @@ describe('TasksService', () => {
       );
       expect(error.status).toBe(400);
     }
+  });
+
+  it('TEST-6 should assign a task to a user after creating a task', async () => {
+    const updateTaskDto: UpdateTaskDto = {
+      assignedToId: mockAccounts[1].id,
+    };
+
+    jest
+      .spyOn(mockAccountRepository, 'findOneBy')
+      .mockReturnValue(mockAccounts[1]);
+    jest.spyOn(mockTaskRepository, 'preload').mockReturnValue(mockAssignedTask);
+    jest.spyOn(mockTaskRepository, 'save').mockReturnValue(mockAssignedTask);
+
+    const assignedTask = await tasksService.update(
+      mockTasks[0].id,
+      updateTaskDto,
+      mockAccounts[0],
+    );
+
+    expect(assignedTask.assignedTo).toEqual(mockAccounts[1]);
   });
 });

@@ -2,8 +2,12 @@ import { faker } from '@faker-js/faker';
 import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 import { UpdateTaskDto } from 'src/tasks/dto/update-task.dto';
 import { Task } from 'src/tasks/entities/task.entity';
+import { mockAccounts } from './accounts.mock';
 
-export const mockTaskRepository = {};
+export const mockTaskRepository = {
+  preload: jest.fn(),
+  save: jest.fn(),
+};
 
 export const mockTasks: Task[] = [
   {
@@ -16,6 +20,16 @@ export const mockTasks: Task[] = [
     createdBy: null,
   },
 ];
+
+export const mockAssignedTask: Task = {
+  id: faker.string.uuid(),
+  title: 'Recopilar requisitos',
+  description: 'Agendar reunión con el cliente para recopilar requisitos',
+  project: null,
+  state: null,
+  assignedTo: mockAccounts[1],
+  createdBy: null,
+};
 
 export const mockCreateTaskDto: CreateTaskDto = {
   title: 'Recopilar requisitos',

@@ -112,7 +112,7 @@ export class TasksService {
           `Account with id ${assignedToId} not found`,
         );
       }
-      if (assignedTo.role.level >= account.role.level) {
+      if (assignedTo.role.level <= account.role.level) {
         throw new BadRequestException(
           'You cannot assign a task to a user with a greater role',
         );
