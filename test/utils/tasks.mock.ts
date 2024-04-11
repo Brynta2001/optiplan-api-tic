@@ -3,6 +3,7 @@ import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 import { UpdateTaskDto } from 'src/tasks/dto/update-task.dto';
 import { Task } from 'src/tasks/entities/task.entity';
 import { mockAccounts } from './accounts.mock';
+import { mockStates } from './states.mock';
 
 export const mockTaskRepository = {
   preload: jest.fn(),
@@ -29,6 +30,11 @@ export const mockAssignedTask: Task = {
   state: null,
   assignedTo: mockAccounts[1],
   createdBy: null,
+};
+
+export const mockStartedTask: Task = {
+  ...mockTasks[0],
+  state: mockStates[0],
 };
 
 export const mockCreateTaskDto: CreateTaskDto = {
