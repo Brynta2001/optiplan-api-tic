@@ -46,6 +46,11 @@ export class ProjectsController {
     return this.projectsService.findStates(id);
   }
 
+  @Get(':id/tasks')
+  findTasks(@Param('id', ParseUUIDPipe) id: string) {
+    return this.projectsService.findTasks(id);
+  }
+
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,

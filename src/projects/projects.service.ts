@@ -76,6 +76,11 @@ export class ProjectsService {
     return project.states;
   }
 
+  async findTasks(id: string) {
+    const project = await this.findOne(id);
+    return project.tasks;
+  }
+
   private handleDBExceptions(error: any) {
     if (error.code === '23505') {
       throw new BadRequestException(error.detail);
