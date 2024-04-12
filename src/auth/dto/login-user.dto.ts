@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsIn,
@@ -21,6 +22,15 @@ export class LoginAccountDto {
   })
   password: string;
 
+  @ApiProperty({
+    enum: [
+      'business_manager',
+      'area_manager',
+      'area_leader',
+      'technician',
+      'admin',
+    ],
+  })
   @IsIn([
     'business_manager',
     'area_manager',

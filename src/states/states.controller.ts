@@ -8,10 +8,13 @@ import {
   Delete,
   ParseUUIDPipe,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { StatesService } from './states.service';
 import { CreateStateDto } from './dto/create-state.dto';
 import { UpdateStateDto } from './dto/update-state.dto';
 
+@ApiTags('States')
+@ApiBearerAuth()
 @Controller('states')
 export class StatesController {
   constructor(private readonly statesService: StatesService) {}
