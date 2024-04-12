@@ -5,6 +5,8 @@ import { CreateProjectDto } from 'src/projects/dto/create-project.dto';
 
 export const mockProjectRepository = {};
 
+export const mockProjectsService = {};
+
 export const mockProjects: Project[] = [
   {
     id: faker.string.uuid(),
