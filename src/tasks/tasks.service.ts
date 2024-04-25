@@ -170,6 +170,8 @@ export class TasksService {
         id: task.id,
         title: task.title,
         description: task.description,
+        startDate: task.startDate,
+        endDate: task.endDate,
         state: task.state,
         project: {
           id: task.project.id,
