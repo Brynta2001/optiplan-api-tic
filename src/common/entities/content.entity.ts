@@ -11,4 +11,14 @@ export abstract class Content {
     nullable: true,
   })
   description?: string;
+
+  @Column('date', {
+    nullable: true,
+  })
+  startDate: string;
+
+  @Column('date', {
+    nullable: true,
+  })
+  endDate: string;
 }

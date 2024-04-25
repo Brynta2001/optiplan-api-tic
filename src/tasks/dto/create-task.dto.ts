@@ -1,4 +1,10 @@
-import { IsOptional, IsString, IsUUID, MinLength } from 'class-validator';
+import {
+  IsDate,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MinLength,
+} from 'class-validator';
 
 export class CreateTaskDto {
   @IsString()
@@ -23,4 +29,12 @@ export class CreateTaskDto {
   @IsOptional()
   @IsUUID()
   parentTaskId?: string;
+
+  @IsOptional()
+  @IsDate()
+  startDate?: string;
+
+  @IsOptional()
+  @IsDate()
+  endDate?: string;
 }
