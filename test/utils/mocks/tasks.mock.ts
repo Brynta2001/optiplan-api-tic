@@ -19,6 +19,8 @@ export const mockTasks: Task[] = [
     state: null,
     assignedTo: null,
     createdBy: null,
+    startDate: '',
+    endDate: '',
   },
 ];
 
@@ -30,6 +32,8 @@ export const mockAssignedTask: Task = {
   state: null,
   assignedTo: mockAccounts[1],
   createdBy: null,
+  startDate: '',
+  endDate: '',
 };
 
 export const mockStartedTask: Task = {

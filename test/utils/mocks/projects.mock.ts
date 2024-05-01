@@ -16,6 +16,9 @@ export const mockProjects: Project[] = [
     createdBy: mockAccounts[0],
     states: [],
     tasks: [],
+    priorityOrder: 0,
+    startDate: '',
+    endDate: '',
   },
 ];
 
