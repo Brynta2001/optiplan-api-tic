@@ -23,9 +23,15 @@ export class ProjectsService {
 
   async create(createProjectDto: CreateProjectDto, account: Account) {
     try {
+      // Count the number of projects created by the account
+      const projectsCount = await this.projectRepository.count({
+        where: { createdBy: { id: account.id } },
+      });
+
       const project = this.projectRepository.create({
         ...createProjectDto,
         createdBy: account,
+        priorityOrder: projectsCount + 1,
       });
       return await this.projectRepository.save(project);
     } catch (error) {

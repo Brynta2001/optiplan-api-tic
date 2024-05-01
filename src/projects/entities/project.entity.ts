@@ -9,6 +9,9 @@ export class Project extends Content {
   @Column('text')
   code: string;
 
+  @Column('int')
+  priorityOrder: number;
+
   @ManyToOne(() => Account, (account) => account.projects, { eager: true })
   createdBy: Account;
 
