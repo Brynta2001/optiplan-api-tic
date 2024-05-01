@@ -18,7 +18,7 @@ import {
   mockAssignedTask,
   mockStates,
   mockStartedTask,
-} from '../../test/utils';
+} from '../../test/utils/mocks';
 
 describe('TasksService', () => {
   let tasksService: TasksService;

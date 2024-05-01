@@ -11,7 +11,7 @@ import {
   mockAccounts,
   mockRoleRepository,
   mockUserRepository,
-} from '../../test/utils';
+} from '../../test/utils/mocks';
 
 describe('AuthService', () => {
   let authService: AuthService;

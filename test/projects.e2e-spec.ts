@@ -6,7 +6,7 @@ import {
   mockCreateProjectDto,
   mockProjectRepository,
   mockProjectsService,
-} from './utils';
+} from './utils/mocks';
 import { ProjectsService } from '../src/projects/projects.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '../src/projects/entities/project.entity';

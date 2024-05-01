@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
 import { Project } from './entities/project.entity';
-import { mockProjectRepository } from '../../test/utils';
+import { mockProjectRepository } from '../../test/utils/mocks';
 
 describe('ProjectsController', () => {
   let projectsController: ProjectsController;
