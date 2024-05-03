@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/auth/entities/user.entity';
+import { User } from '../auth/entities/user.entity';
 import { In, Repository } from 'typeorm';
 import { initialData } from './data/seed-data';
-import { Role } from 'src/auth/entities/role.entity';
-import { Account } from 'src/auth/entities/account.entity';
+import { Role } from '../auth/entities/role.entity';
+import { Account } from '../auth/entities/account.entity';
 
 @Injectable()
 export class SeedService {

@@ -1,45 +1,50 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import * as request from 'supertest';
+import { Repository } from 'typeorm';
 import { ProjectsModule } from '../src/projects/projects.module';
-import {
-  mockCreateProjectDto,
-  mockProjectRepository,
-  mockProjectsService,
-} from './utils/mocks';
 import { ProjectsService } from '../src/projects/projects.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '../src/projects/entities/project.entity';
 
-describe('ProjectsController (e2e)', () => {
+describe('Projects (e2e)', () => {
   let app: INestApplication;
-
   const projectRepositoryToken = getRepositoryToken(Project);
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [ProjectsModule],
+      imports: [
+        TypeOrmModule.forRoot({
+          type: 'better-sqlite3',
+          database: ':memory:',
+          dropSchema: true,
+          entities: [__dirname + '/../../src/**/*.entity{.ts,.js}'],
+          synchronize: true,
+        }),
+        ProjectsModule,
+        ConfigModule.forRoot(),
+      ],
       providers: [
         ProjectsService,
         {
           provide: projectRepositoryToken,
-          useValue: mockProjectRepository,
+          useClass: Repository,
         },
+        // {
+        //   provide: DataSource,
+        //   useFactory: async () => await testDatasetSeed(),
+        // },
       ],
-    })
-      .overrideProvider(ProjectsService)
-      .useValue(mockProjectsService)
-      .compile();
+    }).compile();
 
     app = moduleFixture.createNestApplication();
-
     await app.init();
   });
 
-  it('/ (POST)', () => {
+  it('/ (GET)', () => {
     return request(app.getHttpServer())
-      .post('/projects')
-      .send(mockCreateProjectDto)
+      .get('/projects')
       .expect(200)
       .expect('Hello World!');
   });
