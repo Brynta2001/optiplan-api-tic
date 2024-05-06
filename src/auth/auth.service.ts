@@ -130,7 +130,14 @@ export class AuthService {
       select: { user: { email: true, fullName: true, id: true } },
       relations: ['user'],
     });
-    return accountsLowerRole.map((account) => account.user);
+    return accountsLowerRole.map((account) => {
+      return {
+        id: account.id,
+        email: account.user.email,
+        fullName: account.user.fullName,
+        department: account.user.department,
+      };
+    });
   }
 
   private getJwtToken(payload: JwtPayload) {
