@@ -15,10 +15,10 @@ export abstract class Content {
   @Column('date', {
     nullable: true,
   })
-  startDate: string;
+  startDate: Date;
 
   @Column('date', {
     nullable: true,
   })
-  endDate: string;
+  endDate: Date;
 }

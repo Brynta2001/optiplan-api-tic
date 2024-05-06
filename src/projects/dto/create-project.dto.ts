@@ -1,5 +1,5 @@
 import {
-  IsDate,
+  IsDateString,
   IsOptional,
   IsString,
   Length,
@@ -20,10 +20,10 @@ export class CreateProjectDto {
   code: string;
 
   @IsOptional()
-  @IsDate()
-  startDate?: string;
+  @IsDateString()
+  startDate?: Date;
 
   @IsOptional()
-  @IsDate()
-  endDate?: string;
+  @IsDateString()
+  endDate?: Date;
 }
