@@ -1,5 +1,5 @@
 import {
-  IsDate,
+  IsDateString,
   IsOptional,
   IsString,
   IsUUID,
@@ -31,10 +31,10 @@ export class CreateTaskDto {
   parentTaskId?: string;
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   startDate?: string;
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   endDate?: string;
 }
