@@ -17,4 +17,9 @@ export class SeedController {
   createRoles() {
     return this.seedService.createRoles();
   }
+
+  @Get('states')
+  createStates() {
+    return this.seedService.createStates();
+  }
 }

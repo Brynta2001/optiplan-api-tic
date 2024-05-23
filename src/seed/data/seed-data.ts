@@ -67,11 +67,22 @@ export const initialData = {
     },
   ],
 
-  boards: [
+  states: [
     {
-      name: 'Progress Board',
-      description: 'This is a board to track the progress of the activities',
-      columns: 3,
+      name: 'New',
+      sequence: 0,
+    },
+    {
+      name: 'To Do',
+      sequence: 1,
+    },
+    {
+      name: 'In Progress',
+      sequence: 2,
+    },
+    {
+      name: 'Done',
+      sequence: 3,
     },
   ],
 };

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../auth/entities/user.entity';
 import { In, Repository } from 'typeorm';
 import { initialData } from './data/seed-data';
+import { User } from '../auth/entities/user.entity';
 import { Role } from '../auth/entities/role.entity';
 import { Account } from '../auth/entities/account.entity';
+import { State } from '../states/entities/state.entity';
 
 @Injectable()
 export class SeedService {
@@ -15,6 +16,8 @@ export class SeedService {
     private readonly accountRepository: Repository<Account>,
     @InjectRepository(Role)
     private readonly rolesRepository: Repository<Role>,
+    @InjectRepository(State)
+    private readonly statesRepository: Repository<State>,
   ) {}
 
   async createUsers() {
@@ -56,6 +59,19 @@ export class SeedService {
     });
 
     return await this.rolesRepository.save(roles);
+  }
+
+  async deleteStates() {
+    const queryBuilder = this.rolesRepository.createQueryBuilder();
+    await queryBuilder.delete().where({}).execute();
+  }
+
+  async createStates() {
+    const seedStates = initialData.states;
+    const states = seedStates.map((state) => {
+      return this.statesRepository.create(state);
+    });
+    return await this.statesRepository.save(states);
   }
 
   private async getRolesByName(roles: string[]) {
