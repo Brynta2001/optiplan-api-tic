@@ -27,10 +27,12 @@ export class TasksService {
     private readonly accountRepository: Repository<Account>,
     private readonly projectsService: ProjectsService,
     private readonly statesService: StatesService,
+    @InjectRepository(State)
+    private readonly stateRepository: Repository<State>,
   ) {}
 
   async create(createTaskDto: CreateTaskDto, account: Account) {
-    const { projectId, stateId, assignedToId, parentTaskId, ...taskDetails } =
+    const { projectId, assignedToId, parentTaskId, ...taskDetails } =
       createTaskDto;
 
     let state: State;
@@ -39,8 +41,14 @@ export class TasksService {
 
     const project = await this.projectsService.findOne(projectId);
 
-    if (stateId) {
-      state = await this.statesService.findOne(stateId);
+    // if (stateId) {
+    //   state = await this.statesService.findOne(stateId);
+    // }
+
+    state = await this.stateRepository.findOneBy({ name: 'New' });
+
+    if (!state) {
+      state = await this.stateRepository.save({ name: 'New', sequence: 0 });
     }
 
     if (assignedToId) {
@@ -151,7 +159,7 @@ export class TasksService {
       .getTreeRepository(Task)
       .findDescendantsTree(parentTask, {
         depth: 1,
-        relations: [],
+        relations: ['Project'],
       });
     return task;
   }
