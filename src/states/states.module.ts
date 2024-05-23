@@ -10,6 +10,6 @@ import { ProjectsModule } from '../projects/projects.module';
   controllers: [StatesController],
   providers: [StatesService],
   imports: [TypeOrmModule.forFeature([State]), AuthModule, ProjectsModule],
-  exports: [StatesService],
+  exports: [StatesService, TypeOrmModule],
 })
 export class StatesModule {}

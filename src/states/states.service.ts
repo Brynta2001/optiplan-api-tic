@@ -9,7 +9,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateStateDto } from './dto/create-state.dto';
 import { UpdateStateDto } from './dto/update-state.dto';
-import { ProjectsService } from '../projects/projects.service';
 import { State } from './entities/state.entity';
 
 @Injectable()
@@ -19,25 +18,18 @@ export class StatesService {
   constructor(
     @InjectRepository(State)
     private readonly stateRepository: Repository<State>,
-    private readonly projectsService: ProjectsService,
   ) {}
   async create(createStateDto: CreateStateDto) {
     console.log(createStateDto);
-    const { projectId, ...stateDetails } = createStateDto;
-    const project = await this.projectsService.findOne(projectId);
+    const { ...stateDetails } = createStateDto;
 
     try {
       const state = this.stateRepository.create({
         ...stateDetails,
-        project,
       });
       await this.stateRepository.save(state);
       return {
         ...state,
-        project: {
-          id: state.project.id,
-          title: state.project.title,
-        },
       };
     } catch (error) {
       this.handleDBExceptions(error);

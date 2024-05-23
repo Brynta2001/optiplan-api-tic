@@ -77,11 +77,6 @@ export class ProjectsService {
     return await this.projectRepository.remove(project);
   }
 
-  async findStates(id: string) {
-    const project = await this.findOne(id);
-    return project.states;
-  }
-
   async findTasks(id: string) {
     const project = await this.findOne(id);
     return project.tasks;
