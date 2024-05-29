@@ -159,7 +159,6 @@ export class TasksService {
       .getTreeRepository(Task)
       .findDescendantsTree(parentTask, {
         depth: 1,
-        relations: ['Project'],
       });
     return task;
   }
