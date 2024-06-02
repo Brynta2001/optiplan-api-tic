@@ -13,7 +13,6 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors();
   app.enableCors({
     origin: '*',
     credentials: true,
