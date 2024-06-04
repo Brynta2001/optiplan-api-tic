@@ -9,7 +9,6 @@ export const mockStates: State[] = [
     id: '1',
     name: 'To Do',
     sequence: 1,
-    project: null,
     tasks: [],
   },
 ];

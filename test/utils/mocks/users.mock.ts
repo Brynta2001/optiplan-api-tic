@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { User } from 'src/auth/entities/user.entity';
+import { fixtureDepartments } from '../fixtures/departments.fixture';
 
 class MockUser {
   id: string;
@@ -11,12 +12,12 @@ class MockUser {
   checkFieldsBeforeInsert: any;
   checkFieldsBeforeUpdate: any;
 
-  constructor(department: string) {
+  constructor() {
     this.id = faker.string.uuid();
     this.fullName = faker.person.fullName();
-    this.email = faker.internet.email();
+    this.email = faker.internet.email().toLowerCase();
     this.password = faker.internet.password();
-    this.department = department;
+    this.department = faker.helpers.arrayElement(fixtureDepartments);
     this.account = null;
     this.checkFieldsBeforeInsert = jest.fn();
     this.checkFieldsBeforeUpdate = jest.fn();
@@ -28,4 +29,10 @@ export const mockUserRepository = {
   save: jest.fn(),
 };
 
-export const mockUsers: User[] = [new MockUser('IT'), new MockUser('IT')];
+export const mockUsers: User[] = [
+  new MockUser(),
+  new MockUser(),
+  new MockUser(),
+  new MockUser(),
+  new MockUser(),
+];

@@ -19,8 +19,8 @@ export const mockTasks: Task[] = [
     state: null,
     assignedTo: null,
     createdBy: null,
-    startDate: '',
-    endDate: '',
+    startDate: faker.date.recent(),
+    endDate: faker.date.future(),
   },
 ];
 
@@ -32,8 +32,8 @@ export const mockAssignedTask: Task = {
   state: null,
   assignedTo: mockAccounts[1],
   createdBy: null,
-  startDate: '',
-  endDate: '',
+  startDate: faker.date.recent(),
+  endDate: faker.date.future(),
 };
 
 export const mockStartedTask: Task = {

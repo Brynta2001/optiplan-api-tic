@@ -14,11 +14,10 @@ export const mockProjects: Project[] = [
     description: 'Project 1 description',
     code: faker.hacker.abbreviation(),
     createdBy: mockAccounts[0],
-    states: [],
     tasks: [],
     priorityOrder: 0,
-    startDate: '',
-    endDate: '',
+    startDate: faker.date.recent(),
+    endDate: faker.date.future(),
   },
 ];
 
