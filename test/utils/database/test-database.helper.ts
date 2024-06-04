@@ -6,9 +6,7 @@ import { Task } from '../../../src/tasks/entities/task.entity';
 import { Role } from '../../../src/auth/entities/role.entity';
 import { User } from '../../../src/auth/entities/user.entity';
 import { Account } from '../../../src/auth/entities/account.entity';
-import { rolesFixtures } from '../fixtures/roles.fixture';
-import { fixtureAccounts } from '../fixtures/accounts/accounts.fixture';
-import { fixtureUsers } from '../fixtures/users.fixture';
+import { rolesFixtures, fixtureUsers, fixtureAccounts } from '../fixtures';
 
 export class TestDatabaseHelper {
   private static _instance: TestDatabaseHelper;
