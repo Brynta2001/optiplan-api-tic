@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpCode } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { CreateAccountDto } from './dto/create-account.dto';
@@ -19,6 +19,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @HttpCode(200)
   login(@Body() loginAccountDto: LoginAccountDto) {
     return this.authService.login(loginAccountDto);
   }
