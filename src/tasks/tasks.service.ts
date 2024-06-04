@@ -85,7 +85,11 @@ export class TasksService {
   }
 
   async findOne(id: string) {
-    const task = await this.taskRepository.findOneBy({ id });
+    // const task = await this.taskRepository.findOneBy({ id });
+    const task = await this.taskRepository.findOne({
+      where: { id },
+      relations: ['project', 'state', 'assignedTo', 'createdBy'],
+    });
     if (!task) {
       throw new NotFoundException(`Task with id ${id} not found`);
     }
@@ -159,8 +163,17 @@ export class TasksService {
       .getTreeRepository(Task)
       .findDescendantsTree(parentTask, {
         depth: 1,
+        relations: ['state', 'assignedTo'],
       });
-    return task;
+
+    const { project, ...taskDetails } = task;
+    return {
+      project: {
+        id: project.id,
+        title: project.title,
+      },
+      ...taskDetails,
+    };
   }
 
   // Return task by createdBy
