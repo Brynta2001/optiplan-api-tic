@@ -20,7 +20,6 @@ export class StatesService {
     private readonly stateRepository: Repository<State>,
   ) {}
   async create(createStateDto: CreateStateDto) {
-    console.log(createStateDto);
     const { ...stateDetails } = createStateDto;
 
     try {

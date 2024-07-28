@@ -21,7 +21,6 @@ export class StatesController {
 
   @Post()
   create(@Body() createStateDto: CreateStateDto) {
-    console.log(createStateDto);
     return this.statesService.create(createStateDto);
   }
 

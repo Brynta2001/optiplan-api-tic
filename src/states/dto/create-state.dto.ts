@@ -1,4 +1,4 @@
-import { IsInt, IsPositive, IsString, IsUUID } from 'class-validator';
+import { IsInt, IsPositive, IsString } from 'class-validator';
 
 export class CreateStateDto {
   @IsString()
@@ -7,7 +7,4 @@ export class CreateStateDto {
   @IsInt()
   @IsPositive()
   sequence: number;
-
-  @IsUUID()
-  projectId: string;
 }
