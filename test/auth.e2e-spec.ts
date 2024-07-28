@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { DataSource } from 'typeorm';
 import { AppModule } from './../src/app.module';
-import { TestDatabaseHelper } from './utils/database/test-database.helper';
+import { TestDatabaseHelper } from './utils/helpers/test-database.helper';
 import { mockCreateAccountDto, mockLoginAccountDto } from './utils/mocks';
 
 describe('AuthController', () => {
@@ -20,7 +20,8 @@ describe('AuthController', () => {
       .useValue(dataSource)
       .compile();
 
-    testDatabaseHelper.seedAuth(moduleFixture.get(DataSource));
+    await testDatabaseHelper.seedAuth(moduleFixture.get(DataSource));
+
     app = moduleFixture.createNestApplication();
     return await app.init();
   });
