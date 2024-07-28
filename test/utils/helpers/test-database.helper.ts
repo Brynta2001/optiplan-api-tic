@@ -6,7 +6,14 @@ import { Task } from '../../../src/tasks/entities/task.entity';
 import { Role } from '../../../src/auth/entities/role.entity';
 import { User } from '../../../src/auth/entities/user.entity';
 import { Account } from '../../../src/auth/entities/account.entity';
-import { rolesFixtures, fixtureUsers, fixtureAccounts } from '../fixtures';
+import {
+  rolesFixtures,
+  fixtureUsers,
+  fixtureAccounts,
+  fixtureProjects,
+  fixtureStates,
+} from '../fixtures';
+import { fixtureTasks } from '../fixtures/tasks.fixture';
 
 export class TestDatabaseHelper {
   private static _instance: TestDatabaseHelper;
@@ -65,5 +72,44 @@ export class TestDatabaseHelper {
     const accounts = accountRepository.create(newAccounts);
 
     await accountRepository.save(accounts);
+  }
+
+  async seedProjects(dataSource: DataSource) {
+    const projectRepository = dataSource.getRepository(Project);
+    const accountRepository = dataSource.getRepository(Account);
+    const accounts = await accountRepository.find();
+    const projects = projectRepository.create(
+      fixtureProjects.map((project) => {
+        return {
+          ...project,
+          createdBy: accounts[0],
+        };
+      }),
+    );
+    await projectRepository.save(projects);
+  }
+
+  async seedStates(dataSource: DataSource) {
+    const stateRepository = dataSource.getRepository(State);
+    const states = stateRepository.create(fixtureStates);
+    await stateRepository.save(states);
+  }
+
+  async seedTasks(dataSource: DataSource) {
+    const taskRepository = dataSource.getRepository(Task);
+    const projectRepository = dataSource.getRepository(Project);
+    const accountRepository = dataSource.getRepository(Account);
+    const accounts = await accountRepository.find();
+    const projects = await projectRepository.find();
+    const tasks = taskRepository.create(
+      fixtureTasks.map((task) => {
+        return {
+          ...task,
+          project: projects[0],
+          createdBy: accounts[0],
+        };
+      }),
+    );
+    await taskRepository.save(tasks);
   }
 }
