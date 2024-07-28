@@ -1,6 +1,6 @@
 # OptiPlan API
 
-This is the backend of the OptiPlan project,  a kanban-based task management web app for enterprises. It is a REST API that provides endpoints to manage projects, tasks, states and also accounts.
+This is the backend of the OptiPlan project, a kanban-based task management web app for enterprises. It is a REST API that provides endpoints to manage projects, tasks, states and also accounts.
 
 ## Technologies
 
@@ -98,3 +98,7 @@ This projects wants to implement good practices, so `CommitLint` is implemented 
 ## Observations
 
 If you want to use this repository and make commits, you have to use Conventional Commits; the project has `Husky` and `CommitLint` implemented.
+
+## License
+
+Copyright (c) 2024 Bryan Tapia for Escuela Politécnica Nacional as Titling Project.
