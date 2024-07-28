@@ -14,6 +14,7 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Account } from '../auth/entities/account.entity';
 import { Auth, GetAccount } from '../auth/decorators';
+import { ValidRoles } from '../auth/interfaces/roles.interface';
 
 @ApiTags('Projects')
 @ApiBearerAuth()
@@ -22,7 +23,7 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
-  @Auth()
+  @Auth(ValidRoles.businessManager)
   create(
     @Body() createProjectDto: CreateProjectDto,
     @GetAccount() account: Account,
@@ -31,22 +32,25 @@ export class ProjectsController {
   }
 
   @Get()
-  @Auth()
+  @Auth(ValidRoles.businessManager)
   findAll(@GetAccount() account: Account) {
     return this.projectsService.findAll(account);
   }
 
   @Get(':id')
+  @Auth(ValidRoles.businessManager)
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.projectsService.findOne(id);
   }
 
   @Get(':id/tasks')
+  @Auth(ValidRoles.businessManager)
   findTasks(@Param('id', ParseUUIDPipe) id: string) {
     return this.projectsService.findTasks(id);
   }
 
   @Patch(':id')
+  @Auth(ValidRoles.businessManager)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProjectDto: UpdateProjectDto,
@@ -55,6 +59,7 @@ export class ProjectsController {
   }
 
   @Delete(':id')
+  @Auth(ValidRoles.businessManager)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.projectsService.remove(id);
   }
