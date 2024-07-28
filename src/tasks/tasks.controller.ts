@@ -65,6 +65,12 @@ export class TasksController {
   }
 
   @Delete(':id')
+  @Auth(
+    ValidRoles.businessManager,
+    ValidRoles.areaManager,
+    ValidRoles.areaLeader,
+    ValidRoles.technician,
+  )
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.tasksService.remove(id);
   }
