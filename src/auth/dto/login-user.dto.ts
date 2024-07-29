@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
@@ -8,9 +9,19 @@ import {
 } from 'class-validator';
 
 export class LoginAccountDto {
+  @ApiProperty({
+    example: faker.internet.email().toLowerCase(),
+    description: 'The email of the user',
+    nullable: false,
+  })
   @IsEmail()
   email: string;
 
+  @ApiProperty({
+    example: faker.internet.password(),
+    description: 'The password of the user',
+    nullable: false,
+  })
   @IsString()
   @MaxLength(50)
   @IsStrongPassword({
