@@ -3,7 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TasksService } from './tasks.service';
 import { TasksController } from './tasks.controller';
 import { Task } from './entities/task.entity';
-import { AuthModule } from 'src/auth/auth.module';
+import { AuthModule } from '../auth/auth.module';
+import { ProjectsModule } from '../projects/projects.module';
+import { StatesModule } from '../states/states.module';
 
 @Module({
   controllers: [TasksController],
@@ -11,6 +13,8 @@ import { AuthModule } from 'src/auth/auth.module';
   imports: [
     TypeOrmModule.forFeature([Task]),
     AuthModule,
+    ProjectsModule,
+    StatesModule,
   ],
 })
 export class TasksModule {}

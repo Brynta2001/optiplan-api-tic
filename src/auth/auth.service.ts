@@ -1,9 +1,14 @@
-import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
-import * as bcrypt from "bcrypt";
+import * as bcrypt from 'bcrypt';
 
 import { User } from './entities/user.entity';
 import { LoginAccountDto, CreateAccountDto } from './dto';
@@ -11,10 +16,8 @@ import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { Role } from './entities/role.entity';
 import { Account } from './entities/account.entity';
 
-
 @Injectable()
 export class AuthService {
-
   constructor(
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
@@ -26,11 +29,15 @@ export class AuthService {
   ) {}
 
   async create(createAccountDto: CreateAccountDto) {
+    const { password, roles, ...userData } = createAccountDto;
+    const userRoles = await this.getRolesByName(roles);
+
+    // Verify if userRoles is empty
+    if (userRoles.length == 0) {
+      throw new BadRequestException('Roles are not valid');
+    }
+
     try {
-      const { password, roles, ...userData } = createAccountDto;
-      
-      const userRoles = await this.getRolesByName(roles);
-      
       // User creation
       const user = this.userRepository.create({
         ...userData,
@@ -40,7 +47,7 @@ export class AuthService {
 
       // Accounts creation
       const accounts: Account[] = [];
-      userRoles.forEach(role => {
+      userRoles.forEach((role) => {
         const account = this.accountRepository.create({
           role,
           user: userCreated,
@@ -49,39 +56,39 @@ export class AuthService {
       });
 
       await this.accountRepository.save(accounts);
-      delete userCreated.password
+      delete userCreated.password;
       return {
         ...userCreated,
         roles,
-      }
+      };
     } catch (error) {
       this.handleDBError(error);
     }
   }
 
-  async getAllRoles(){
+  async getAllRoles() {
     return await this.roleRepository.find();
   }
 
-  private async getRolesByName(roles: string[]){
-    return await this.roleRepository.find({where: {name: In(roles)}});
+  private async getRolesByName(roles: string[]) {
+    return await this.roleRepository.find({ where: { name: In(roles) } });
   }
 
   async login(loginAccountDto: LoginAccountDto) {
     const { email, password, role } = loginAccountDto;
 
     const user = await this.userRepository.findOne({
-      where: {email}
+      where: { email },
     });
 
     const account = await this.accountRepository.findOne({
       where: {
-        user: {id: user.id},
-        role: {name: role},
+        user: { id: user.id },
+        role: { name: role },
       },
       select: {
         user: {
-          email: true, 
+          email: true,
           password: true,
           fullName: true,
           department: true,
@@ -96,7 +103,7 @@ export class AuthService {
     });
 
     // Email (user) or role are not valid
-    if (!user || !account){
+    if (!user || !account) {
       throw new UnauthorizedException('Credentials are not valid (account)');
     }
     if (!bcrypt.compareSync(password, account.user.password)) {
@@ -104,24 +111,34 @@ export class AuthService {
     }
 
     return {
+      id: account.id,
       email: account.user.email,
       fullName: account.user.fullName,
       department: account.user.department,
       role: account.role.name,
-      token: this.getJwtToken({id: account.id}),
+      token: this.getJwtToken({ id: account.id }),
     };
   }
- 
+
   // Return users with lower role than logged user
   async getUsersWithLowerRole(role: Role) {
     const roleLevel: number = role.level;
-    const lowerRole = await this.roleRepository.findOne({where: {level: roleLevel + 1}});
+    const lowerRole = await this.roleRepository.findOne({
+      where: { level: roleLevel + 1 },
+    });
     const accountsLowerRole = await this.accountRepository.find({
-      where: { role: {id: lowerRole.id} },
+      where: { role: { id: lowerRole.id } },
       select: { user: { email: true, fullName: true, id: true } },
       relations: ['user'],
     });
-    return accountsLowerRole.map(account => account.user);
+    return accountsLowerRole.map((account) => {
+      return {
+        id: account.id,
+        email: account.user.email,
+        fullName: account.user.fullName,
+        department: account.user.department,
+      };
+    });
   }
 
   private getJwtToken(payload: JwtPayload) {
@@ -133,7 +150,6 @@ export class AuthService {
     if (error.code === '23505') {
       throw new BadRequestException(error.detail);
     }
-    console.log(error);
     throw new InternalServerErrorException('Please check server logs');
   }
 }

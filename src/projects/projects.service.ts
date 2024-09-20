@@ -1,5 +1,11 @@
-import { Equal, Repository } from 'typeorm';
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -8,7 +14,6 @@ import { Project } from './entities/project.entity';
 
 @Injectable()
 export class ProjectsService {
-
   private readonly logger = new Logger(ProjectsService.name);
 
   constructor(
@@ -18,9 +23,15 @@ export class ProjectsService {
 
   async create(createProjectDto: CreateProjectDto, account: Account) {
     try {
+      // Count the number of projects created by the account
+      const projectsCount = await this.projectRepository.count({
+        where: { createdBy: { id: account.id } },
+      });
+
       const project = this.projectRepository.create({
         ...createProjectDto,
         createdBy: account,
+        priorityOrder: projectsCount + 1,
       });
       return await this.projectRepository.save(project);
     } catch (error) {
@@ -31,7 +42,7 @@ export class ProjectsService {
   async findAll(account: Account) {
     try {
       return await this.projectRepository.find({
-        where: { createdBy: Equal(account) },
+        where: { createdBy: { id: account.id } },
       });
     } catch (error) {
       this.handleDBExceptions(error);
@@ -39,7 +50,7 @@ export class ProjectsService {
   }
 
   async findOne(id: string) {
-    const project = await this.projectRepository.findOneBy({id});
+    const project = await this.projectRepository.findOneBy({ id });
     if (!project) {
       throw new NotFoundException(`Project with id ${id} not found`);
     }
@@ -47,7 +58,10 @@ export class ProjectsService {
   }
 
   async update(id: string, updateProjectDto: UpdateProjectDto) {
-    const project = await this.projectRepository.preload({id, ...updateProjectDto});
+    const project = await this.projectRepository.preload({
+      id,
+      ...updateProjectDto,
+    });
     if (!project) {
       throw new NotFoundException(`Project with id ${id} not found`);
     }
@@ -63,11 +77,18 @@ export class ProjectsService {
     return await this.projectRepository.remove(project);
   }
 
-  private handleDBExceptions(error:any){
+  async findTasks(id: string) {
+    const project = await this.findOne(id);
+    return project.tasks;
+  }
+
+  private handleDBExceptions(error: any) {
     if (error.code === '23505') {
       throw new BadRequestException(error.detail);
     }
-    this.logger.error(error)
-    throw new InternalServerErrorException('Unexpected error, check server logs')
+    this.logger.error(error);
+    throw new InternalServerErrorException(
+      'Unexpected error, check server logs',
+    );
   }
 }

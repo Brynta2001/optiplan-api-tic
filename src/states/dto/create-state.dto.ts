@@ -1,9 +1,19 @@
-import { IsInt, IsString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsInt, IsPositive, IsString } from 'class-validator';
 
 export class CreateStateDto {
-    @IsString()
-    name: string;
+  @ApiProperty({
+    description: 'Name of the state',
+    example: 'New',
+  })
+  @IsString()
+  name: string;
 
-    @IsInt()
-    sequence: number;
+  @ApiProperty({
+    description: 'Sequence of the state',
+    example: 0,
+  })
+  @IsInt()
+  @IsPositive()
+  sequence: number;
 }

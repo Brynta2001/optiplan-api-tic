@@ -1,18 +1,53 @@
-import { IsEmail, IsIn, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { faker } from '@faker-js/faker';
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsEmail,
+  IsIn,
+  IsString,
+  IsStrongPassword,
+  MaxLength,
+} from 'class-validator';
 
 export class LoginAccountDto {
-    @IsEmail()
-    email: string;
+  @ApiProperty({
+    example: faker.internet.email().toLowerCase(),
+    description: 'The email of the user',
+    nullable: false,
+  })
+  @IsEmail()
+  email: string;
 
-    @IsString()
-    @MinLength(6)
-    @MaxLength(50)
-    @Matches(
-        /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-        message: 'The password must have an Uppercase, lowercase letter and a number'
-    })
-    password: string;
+  @ApiProperty({
+    example: faker.internet.password(),
+    description: 'The password of the user',
+    nullable: false,
+  })
+  @IsString()
+  @MaxLength(50)
+  @IsStrongPassword({
+    minLength: 6,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1,
+  })
+  password: string;
 
-    @IsIn(['business_manager', 'area_manager', 'area_leader', 'technician', 'admin'])
-    role: string;
+  @ApiProperty({
+    enum: [
+      'business_manager',
+      'area_manager',
+      'area_leader',
+      'technician',
+      'admin',
+    ],
+  })
+  @IsIn([
+    'business_manager',
+    'area_manager',
+    'area_leader',
+    'technician',
+    'admin',
+  ])
+  role: string;
 }
